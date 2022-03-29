@@ -1,6 +1,10 @@
 import { Category } from './category.entity';
 import { EntityRepository, Repository } from 'typeorm';
-import { Logger, NotFoundException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { Categories } from './categories.inteface';
 import { User } from '../auth/user.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -55,5 +59,50 @@ export class CategoriesRepository extends Repository<Category> {
 
     await this.save(category);
     return category;
+  }
+
+  async deleteCategory(id: number, user: User): Promise<void> {
+    const result = await this.delete({ id });
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`Address with ID "${id}" not found`);
+    }
+  }
+
+  async updateCategory(
+    id: number,
+    createCategoryDto: CreateCategoryDto,
+    user: User,
+  ): Promise<Category> {
+    const category = await this.findOneOrFail({ id });
+
+    if (!category) {
+      throw new NotFoundException(`Category with ID "${id}" not found`);
+    }
+
+    const { name, parentId } = createCategoryDto;
+
+    if (parentId !== 0) {
+      const parent = await this.findOneOrFail(parentId);
+      if (!parent) {
+        throw new NotFoundException(`Parent with id ${parentId} is not exist`);
+      }
+    }
+
+    category.name = name;
+    category.parentId = parentId;
+
+    try {
+      await this.save(category);
+      return category;
+    } catch (error) {
+      this.logger.error(
+        `Failed to update category by ${id} with ${JSON.stringify(
+          createCategoryDto,
+        )} for user "${user.username}".`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
   }
 }

@@ -23,4 +23,20 @@ export class CategoriesService {
   ): Promise<Category> {
     return this.categoriesRepository.createCategory(createCategoryDto, user);
   }
+
+  async deleteCategory(id: number, user: User): Promise<void> {
+    return this.categoriesRepository.deleteCategory(id, user);
+  }
+
+  async updateCategory(
+    id: number,
+    createCategoryDto: CreateCategoryDto,
+    user: User,
+  ): Promise<Category> {
+    return this.categoriesRepository.updateCategory(
+      id,
+      createCategoryDto,
+      user,
+    );
+  }
 }
