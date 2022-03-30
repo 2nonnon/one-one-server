@@ -18,5 +18,5 @@ export class GetGoodsPageDto {
 
   @IsOptional()
   @IsString()
-  order: string;
+  order?: string;
 }
