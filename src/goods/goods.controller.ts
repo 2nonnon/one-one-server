@@ -1,5 +1,6 @@
+import { GoodsPage } from './goods-page.interface';
 import { GetGoodsPageDto } from './dto/get-goods-page.dto';
-import { Controller, Get, Logger, Param } from '@nestjs/common';
+import { Controller, Get, Logger, Param, Post, Body } from '@nestjs/common';
 import { GoodsService } from './goods.service';
 
 @Controller('goods')
@@ -8,9 +9,11 @@ export class GoodsController {
 
   constructor(private goodsService: GoodsService) {}
 
-  @Get()
-  getGoods(@Param() getGoodsPageDto: GetGoodsPageDto): Promise<[]> {
-    this.loggor.verbose(`retrieving goods by ${getGoodsPageDto}`);
+  @Post()
+  getGoods(@Body() getGoodsPageDto: GetGoodsPageDto): Promise<GoodsPage> {
+    this.loggor.verbose(
+      `retrieving goods by ${JSON.stringify(getGoodsPageDto)}`,
+    );
     return this.goodsService.getGoods(getGoodsPageDto);
   }
 }

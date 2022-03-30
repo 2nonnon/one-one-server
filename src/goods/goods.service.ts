@@ -1,3 +1,4 @@
+import { GoodsPage } from './goods-page.interface';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetGoodsPageDto } from './dto/get-goods-page.dto';
@@ -10,7 +11,7 @@ export class GoodsService {
     private goodsRepository: GoodsRepository,
   ) {}
 
-  async getGoods(getGoodsPageDto: GetGoodsPageDto): Promise<[]> {
+  async getGoods(getGoodsPageDto: GetGoodsPageDto): Promise<GoodsPage> {
     return this.goodsRepository.getGoods(getGoodsPageDto);
   }
 }

@@ -1,4 +1,4 @@
-import { Category } from '../category/category.entity';
+import { Category } from '../categories/category.entity';
 import {
   Column,
   Entity,
@@ -28,7 +28,7 @@ export class Good {
   tag: number;
 
   @Column()
-  total: number;
+  total_stock: number;
 
   @Column()
   sale_time: string;

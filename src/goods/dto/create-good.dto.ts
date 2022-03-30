@@ -18,7 +18,7 @@ export class CreateGoodDto {
   tag: number;
 
   @Type(() => Number)
-  total: number;
+  total_stock: number;
 
   @IsString()
   sale_time: string;
