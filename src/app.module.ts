@@ -5,7 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './config.schema';
 import { AddressesModule } from './addresses/addresses.module';
-import { CategoryModule } from './category/categories.module';
+import { CategoryModule } from './categories/categories.module';
 import { GoodsModule } from './goods/goods.module';
 
 @Module({
