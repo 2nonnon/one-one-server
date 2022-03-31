@@ -1,6 +1,14 @@
+import { Sku } from './../skus/sku.entity';
 import { Exclude } from 'class-transformer';
 import { User } from 'src/auth/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Cart {
@@ -9,6 +17,11 @@ export class Cart {
 
   @Column()
   quantity: number;
+
+  @OneToOne(() => Sku, { eager: true })
+  @Exclude({ toPlainOnly: true })
+  @JoinColumn()
+  sku: Sku;
 
   @ManyToOne(() => User, (user) => user.carts, { eager: false })
   @Exclude({ toPlainOnly: true })

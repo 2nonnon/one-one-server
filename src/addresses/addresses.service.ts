@@ -13,8 +13,8 @@ export class AddressesService {
   ) {}
 
   async getAddresses(user: User): Promise<Address[]> {
-    const tasks = this.addressesRepository.find({ user });
-    return tasks;
+    const carts = this.addressesRepository.find({ user });
+    return carts;
   }
 
   async createAddress(
