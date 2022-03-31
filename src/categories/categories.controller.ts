@@ -18,7 +18,7 @@ import { User } from '../auth/user.entity';
 import { Category } from './category.entity';
 
 @Controller('categories')
-export class CategoryController {
+export class CategoriesController {
   private loggor = new Logger('CategoriesController', { timestamp: true });
 
   constructor(private categoriesService: CategoriesService) {}

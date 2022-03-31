@@ -1,5 +1,14 @@
+import { Good } from './../goods/good.entity';
+import { Attribute } from './../attributes/attribute.entity';
 import { Exclude } from 'class-transformer';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Sku {
@@ -24,7 +33,11 @@ export class Sku {
   @Column()
   stock: number;
 
-  //   @ManyToOne(() => User, (user) => user.carts, { eager: false })
-  //   @Exclude({ toPlainOnly: true })
-  //   user: User;
+  @ManyToOne(() => Good, (user) => user.skus, { eager: false })
+  @Exclude({ toPlainOnly: true })
+  good: Good;
+
+  @ManyToMany(() => Attribute, { eager: true })
+  @JoinTable()
+  attributes: Attribute[];
 }

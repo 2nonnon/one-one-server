@@ -1,9 +1,11 @@
+import { Sku } from './../skus/sku.entity';
 import { Category } from '../categories/category.entity';
 import {
   Column,
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -33,7 +35,12 @@ export class Good {
   @Column()
   sale_time: string;
 
-  @ManyToMany(() => Category, { eager: false })
+  @ManyToMany(() => Category, {
+    cascade: true,
+  })
   @JoinTable()
   categories: Category[];
+
+  @OneToMany(() => Sku, (sku) => sku.good, { eager: true })
+  skus: Sku[];
 }

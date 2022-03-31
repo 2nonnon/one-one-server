@@ -1,3 +1,4 @@
+import { CartsModule } from './carts/carts.module';
 import { Module } from '@nestjs/common';
 import { TasksModule } from './tasks/tasks.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -5,7 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './config.schema';
 import { AddressesModule } from './addresses/addresses.module';
-import { CategoryModule } from './categories/categories.module';
+import { CategoriesModule } from './categories/categories.module';
 import { GoodsModule } from './goods/goods.module';
 import { SkusModule } from './skus/skus.module';
 import { AttributesModule } from './attributes/attributes.module';
@@ -45,10 +46,11 @@ import { AttributesModule } from './attributes/attributes.module';
     // }),
     AuthModule,
     AddressesModule,
-    CategoryModule,
+    CategoriesModule,
     GoodsModule,
     SkusModule,
     AttributesModule,
+    CartsModule,
   ],
 })
 export class AppModule {}
