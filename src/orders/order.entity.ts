@@ -37,6 +37,7 @@ export class Order {
 
   @OneToMany(() => OrderDetail, (OrderDetail) => OrderDetail.order, {
     eager: true,
+    cascade: true,
   })
   orderDetails: OrderDetail[];
 

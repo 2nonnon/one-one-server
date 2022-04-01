@@ -57,8 +57,18 @@ export class CategoriesRepository extends Repository<Category> {
       parentId,
     });
 
-    await this.save(category);
-    return category;
+    try {
+      await this.save(category);
+      return category;
+    } catch (error) {
+      this.logger.error(
+        `Failed to create category with ${JSON.stringify(
+          createCategoryDto,
+        )} for user "${user.username}".`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
   }
 
   async deleteCategory(id: number, user: User): Promise<void> {

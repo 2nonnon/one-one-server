@@ -8,6 +8,9 @@ export class OrderDetail {
   id: string;
 
   @Column()
+  goodId: number;
+
+  @Column()
   cover_url: string;
 
   @Column()
