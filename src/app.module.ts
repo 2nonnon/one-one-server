@@ -10,6 +10,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { GoodsModule } from './goods/goods.module';
 import { SkusModule } from './skus/skus.module';
 import { AttributesModule } from './attributes/attributes.module';
+import { OrdersModule } from './orders/orders.module';
+import { OrderDetailsModule } from './order-details/order-details.module';
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { AttributesModule } from './attributes/attributes.module';
     SkusModule,
     AttributesModule,
     CartsModule,
+    OrdersModule,
+    OrderDetailsModule,
   ],
 })
 export class AppModule {}

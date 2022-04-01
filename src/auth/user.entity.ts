@@ -1,6 +1,7 @@
 import { Cart } from './../carts/cart.entity';
 import { Address } from './../addresses/address.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Order } from '../orders/order.entity';
 
 @Entity()
 export class User {
@@ -13,10 +14,12 @@ export class User {
   @Column()
   password: string;
 
-  // eager 为 true 时，获取 user 时自动获取 addresss
-  @OneToMany(() => Address, (address) => address.user, { eager: true })
+  @OneToMany(() => Address, (address) => address.user)
   addresses: Address[];
 
-  @OneToMany(() => Cart, (cart) => cart.user, { eager: true })
+  @OneToMany(() => Cart, (cart) => cart.user)
   carts: Cart[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 }
