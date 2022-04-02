@@ -12,6 +12,7 @@ import { SkusModule } from './skus/skus.module';
 import { AttributesModule } from './attributes/attributes.module';
 import { OrdersModule } from './orders/orders.module';
 import { OrderDetailsModule } from './order-details/order-details.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { OrderDetailsModule } from './order-details/order-details.module';
     CartsModule,
     OrdersModule,
     OrderDetailsModule,
+    UploadModule,
   ],
 })
 export class AppModule {}
