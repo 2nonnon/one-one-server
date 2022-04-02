@@ -2,6 +2,7 @@ import { OrderDetail } from './../order-details/order-detail.entity';
 import { User } from 'src/auth/user.entity';
 import { OrderStatus } from './order-status.enum';
 import {
+  BaseEntity,
   Column,
   Entity,
   ManyToOne,
@@ -10,7 +11,7 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Order {
+export class Order extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: string;
 
@@ -37,7 +38,7 @@ export class Order {
 
   @OneToMany(() => OrderDetail, (OrderDetail) => OrderDetail.order, {
     eager: true,
-    cascade: true,
+    cascade: ['insert', 'update', 'remove', 'soft-remove', 'recover'],
   })
   orderDetails: OrderDetail[];
 

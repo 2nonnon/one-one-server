@@ -1,9 +1,15 @@
 import { Order } from './../orders/order.entity';
 import { OrderStatus } from '../orders/order-status.enum';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
-export class OrderDetail {
+export class OrderDetail extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: string;
 
@@ -31,6 +37,6 @@ export class OrderDetail {
   @Column({ nullable: true })
   deal_time: string;
 
-  @ManyToOne(() => Order)
+  @ManyToOne(() => Order, (order) => order.orderDetails)
   order: Order;
 }

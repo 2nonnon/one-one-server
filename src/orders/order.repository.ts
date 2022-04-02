@@ -14,6 +14,7 @@ export class OrdersRepository extends Repository<Order> {
     user: User,
   ): Promise<Order> {
     const tmp = Object.assign({} as Order, createOrderDto);
+
     tmp.user = user;
     tmp.status = OrderStatus.TO_PAID;
     tmp.create_time = `${new Date().getTime()}`;
