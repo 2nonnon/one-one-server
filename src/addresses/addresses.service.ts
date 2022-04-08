@@ -13,8 +13,28 @@ export class AddressesService {
   ) {}
 
   async getAddresses(user: User): Promise<Address[]> {
-    const carts = this.addressesRepository.find({ user });
-    return carts;
+    const addresses = await this.addressesRepository.find({ user });
+    return addresses;
+  }
+
+  async getAddressById(id: string, user: User): Promise<Address> {
+    const address = await this.addressesRepository.findOneOrFail({ user, id });
+    return address;
+  }
+
+  async getDefaultAddress(user: User): Promise<Address> {
+    const addresses = await this.addressesRepository.find({ user });
+    const address =
+      addresses?.find((item) => item.isDefault) ??
+      addresses?.find((item) => item.isChoosed);
+
+    if (!address) {
+      throw new NotFoundException(
+        `Address of user "${user.username}" not found`,
+      );
+    }
+
+    return address;
   }
 
   async createAddress(
@@ -38,5 +58,9 @@ export class AddressesService {
     user: User,
   ): Promise<Address> {
     return this.addressesRepository.updateAddress(id, createAddressDto, user);
+  }
+
+  async updateAddressChoose(id: string, user: User): Promise<Address> {
+    return this.addressesRepository.updateAddressChoose(id, user);
   }
 }

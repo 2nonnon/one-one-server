@@ -15,7 +15,7 @@ export class Order extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   receive_info: string;
 
   @Column()

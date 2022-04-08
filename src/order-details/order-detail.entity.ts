@@ -31,6 +31,9 @@ export class OrderDetail extends BaseEntity {
   @Column()
   paid: number;
 
+  @Column()
+  market_price: number;
+
   @Column({ enum: OrderStatus })
   status: OrderStatus;
 

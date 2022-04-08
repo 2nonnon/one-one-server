@@ -4,6 +4,7 @@ import { User } from '../auth/user.entity';
 import { Cart } from './cart.entity';
 import { CartsRepository } from './carts.repository';
 import { CreateCartDto } from './dto/create-cart.dto';
+import { DeleteCartsByIdsDto } from './dto/delete-carts-by-ids.dto';
 
 @Injectable()
 export class CartsService {
@@ -13,12 +14,14 @@ export class CartsService {
   ) {}
 
   async getCarts(user: User): Promise<Cart[]> {
-    const carts = this.cartsRepository.find({ user });
+    const carts = await this.cartsRepository.find({ user });
+    console.log(carts);
     return carts;
   }
 
   async getTotal(user: User): Promise<number> {
-    const total = this.cartsRepository.count({ user });
+    const total = await this.cartsRepository.count({ user });
+    console.log(total);
     return total;
   }
 
@@ -32,6 +35,20 @@ export class CartsService {
     if (result.affected === 0) {
       throw new NotFoundException(`Cart with ID "${id}" not found`);
     }
+  }
+
+  async deleteCartByIds(
+    deleteCartsByIdsDto: DeleteCartsByIdsDto,
+    user: User,
+  ): Promise<void> {
+    const ids = deleteCartsByIdsDto.ids;
+    ids.forEach(async (id) => {
+      const result = await this.cartsRepository.delete({ id, user });
+
+      if (result.affected === 0) {
+        throw new NotFoundException(`Cart with ID "${id}" not found`);
+      }
+    });
   }
 
   async updateCart(

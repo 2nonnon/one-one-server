@@ -13,6 +13,7 @@ import { AttributesModule } from './attributes/attributes.module';
 import { OrdersModule } from './orders/orders.module';
 import { OrderDetailsModule } from './order-details/order-details.module';
 import { UploadModule } from './upload/upload.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { UploadModule } from './upload/upload.module';
     OrdersModule,
     OrderDetailsModule,
     UploadModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

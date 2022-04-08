@@ -18,8 +18,9 @@ export class Cart {
   @Column()
   quantity: number;
 
+  // eager: 查询数据库时是否自动返回， Exclude({ toPlainOnly: true }) 返回数据时是否排除
   @OneToOne(() => Sku, { eager: true })
-  @Exclude({ toPlainOnly: true })
+  // @Exclude({ toPlainOnly: true })
   @JoinColumn()
   sku: Sku;
 

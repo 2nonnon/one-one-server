@@ -3,9 +3,6 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateOrderDto {
   @IsNotEmpty()
-  receive_info: string;
-
-  @IsNotEmpty()
   @Type(() => Number)
   paid: number;
 
@@ -16,6 +13,7 @@ export class CreateOrderDto {
     name: string;
     attr: string;
     quantity: number;
+    market_price: number;
     paid: number;
   }[];
 }

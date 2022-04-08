@@ -41,6 +41,6 @@ export class Good {
   @JoinTable()
   categories: Category[];
 
-  @OneToMany(() => Sku, (sku) => sku.good, { eager: true })
+  @OneToMany(() => Sku, (sku) => sku.good)
   skus: Sku[];
 }

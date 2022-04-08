@@ -1,6 +1,4 @@
-import { AddressIsDefault } from './../address-isDefault.enum';
 import {
-  IsEnum,
   IsOptional,
   IsString,
   Matches,
@@ -25,7 +23,6 @@ export class CreateAddressDto {
   @IsString()
   remark?: string;
 
-  @Type(() => Number)
-  @IsEnum(AddressIsDefault)
-  isDefault: AddressIsDefault;
+  @Type(() => Boolean)
+  isDefault: boolean;
 }

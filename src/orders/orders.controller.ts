@@ -13,7 +13,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/user.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderStatusDto } from './dto/update-order.dto';
+import { UpdateOrderReceiveInfoDto } from './dto/update-order-receive-info.dto';
+import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { Order } from './order.entity';
 import { OrdersService } from './orders.service';
 
@@ -31,6 +32,15 @@ export class OrdersController {
     return this.ordersService.getOrders(user);
   }
 
+  // 获取用户全部订单
+  @Get('/:id')
+  getOrder(@Param('id') id: string, @GetUser() user: User): Promise<Order> {
+    this.loggor.verbose(
+      `User "${user.username}" retrieving an order by id:${id}`,
+    );
+    return this.ordersService.getOrder(id, user);
+  }
+
   // 创建订单
   @Post()
   createOrder(
@@ -38,7 +48,9 @@ export class OrdersController {
     @GetUser() user: User,
   ): Promise<Order> {
     this.loggor.verbose(
-      `User "${user.username}" create an order with ${createOrderDto}`,
+      `User "${user.username}" create an order with ${JSON.stringify(
+        createOrderDto,
+      )}`,
     );
     return this.ordersService.createOrder(createOrderDto, user);
   }
@@ -58,9 +70,49 @@ export class OrdersController {
     @GetUser() user: User,
   ): Promise<Order> {
     this.loggor.verbose(
-      `User "${user.username}" update an order status by id: ${id} with ${updateOrderStatusDto}`,
+      `User "${
+        user.username
+      }" update an order status by id: ${id} with ${JSON.stringify(
+        updateOrderStatusDto,
+      )}`,
     );
     const { status } = updateOrderStatusDto;
     return this.ordersService.updateOrderStatus(id, status, user);
+  }
+
+  // 修改订单地址
+  @Patch('/:id/receive')
+  updateOrderReceiveInfo(
+    @Param('id') id: string,
+    @Body() updateOrderReceiveInfoDto: UpdateOrderReceiveInfoDto,
+    @GetUser() user: User,
+  ): Promise<Order> {
+    this.loggor.verbose(
+      `User "${
+        user.username
+      }" update an order status by id: ${id} with ${JSON.stringify(
+        updateOrderReceiveInfoDto,
+      )}`,
+    );
+    const { receive_info } = updateOrderReceiveInfoDto;
+    return this.ordersService.updateOrderReceiveInfo(id, receive_info, user);
+  }
+
+  @Patch('/:id')
+  updateOrder(
+    @Param('id') id: string,
+    @Body() updateOrderDto: UpdateOrderReceiveInfoDto & UpdateOrderStatusDto,
+    @GetUser() user: User,
+  ): Promise<Order> {
+    this.loggor.verbose(
+      `User "${
+        user.username
+      }" update an order status by id: ${id} with ${JSON.stringify(
+        updateOrderDto,
+      )}`,
+    );
+    const { receive_info, status } = updateOrderDto;
+    this.ordersService.updateOrderStatus(id, status, user);
+    return this.ordersService.updateOrderReceiveInfo(id, receive_info, user);
   }
 }

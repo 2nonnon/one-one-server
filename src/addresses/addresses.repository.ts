@@ -19,12 +19,24 @@ export class AddresssRepository extends Repository<Address> {
     const { destination, receiver, mobile, remark, isDefault } =
       createAddressDto;
 
+    const addresses = await this.find({ user });
+
+    const lastChoosed = addresses.find((item) => item.isChoosed);
+
+    if (lastChoosed) {
+      lastChoosed.isChoosed = false;
+      await this.save(lastChoosed);
+    }
+
+    const isChoosed = true;
+
     const address = this.create({
       destination,
       receiver,
       mobile,
       remark,
       isDefault,
+      isChoosed,
       user,
     });
 
@@ -63,6 +75,36 @@ export class AddresssRepository extends Repository<Address> {
         `Failed to update address by ${id} with ${JSON.stringify(
           createAddressDto,
         )} for user "${user.username}".`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async updateAddressChoose(id: string, user: User): Promise<Address> {
+    const addresses = await this.find({ user });
+
+    const lastChoosed = addresses.find((item) => item.isChoosed);
+
+    if (lastChoosed) {
+      lastChoosed.isChoosed = false;
+      await this.save(lastChoosed);
+    }
+
+    const address = await this.findOneOrFail({ id, user });
+
+    if (!address) {
+      throw new NotFoundException(`Address with ID "${id}" not found`);
+    }
+
+    address.isChoosed = true;
+
+    try {
+      await this.save(address);
+      return address;
+    } catch (error) {
+      this.logger.error(
+        `Failed to update address for user "${user.username}".`,
         error.stack,
       );
       throw new InternalServerErrorException();

@@ -52,14 +52,17 @@ export class GoodsRepository extends Repository<Good> {
     return result;
   }
 
-  async getGoodDetailById(id: number): Promise<GoodDetail> {
-    const good = await this.findOneOrFail(id);
+  async getGoodDetailById(id: string): Promise<GoodDetail> {
+    const query = this.createQueryBuilder('good');
+    query.where({ id }).leftJoinAndSelect('good.skus', 'sku');
+
+    const [good] = await query.getMany();
     const skus = good.skus;
     const attributes = {};
-    if (skus.length > 0) {
+    if (skus?.length > 0) {
       const map = new Map();
       skus.forEach((sku) => {
-        sku.attributes.forEach((attr) => {
+        sku.attributes?.forEach((attr) => {
           if (attr.parentId === 0 && !attributes[attr.name]) {
             attributes[attr.name] = [];
             map.set(attr.id, attr.name);

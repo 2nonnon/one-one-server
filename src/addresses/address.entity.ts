@@ -1,4 +1,3 @@
-import { AddressIsDefault } from './address-isDefault.enum';
 import { User } from './../auth/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
@@ -20,8 +19,11 @@ export class Address {
   @Column({ nullable: true })
   remark: string;
 
-  @Column({ enum: AddressIsDefault })
-  isDefault: AddressIsDefault;
+  @Column()
+  isChoosed: boolean;
+
+  @Column()
+  isDefault: boolean;
 
   @ManyToOne(() => User, (user) => user.addresses, { eager: false })
   @Exclude({ toPlainOnly: true })

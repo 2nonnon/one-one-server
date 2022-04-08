@@ -29,6 +29,23 @@ export class AddressesController {
     return this.addressesService.getAddresses(user);
   }
 
+  @Get('/default')
+  getDefaultAddress(@GetUser() user: User): Promise<Address> {
+    this.loggor.verbose(`User "${user.username}" retrieving default Addresses`);
+    return this.addressesService.getDefaultAddress(user);
+  }
+
+  @Get('/:id')
+  getAddressById(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<Address> {
+    this.loggor.verbose(
+      `User "${user.username}" retrieving an Address by id:${id}`,
+    );
+    return this.addressesService.getAddressById(id, user);
+  }
+
   @Post()
   createAddress(
     @Body() createAddressDto: CreateAddressDto,
@@ -60,5 +77,16 @@ export class AddressesController {
       }" update address. id: ${id} update: ${JSON.stringify(createAddressDto)}`,
     );
     return this.addressesService.updateAddress(id, createAddressDto, user);
+  }
+
+  @Patch('/:id/choose')
+  updateAddressChoose(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<Address> {
+    this.loggor.verbose(
+      `User "${user.username}" update address. id: ${id} update: choose`,
+    );
+    return this.addressesService.updateAddressChoose(id, user);
   }
 }

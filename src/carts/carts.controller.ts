@@ -15,6 +15,7 @@ import { User } from '../auth/user.entity';
 import { Cart } from './cart.entity';
 import { CartsService } from './carts.service';
 import { CreateCartDto } from './dto/create-cart.dto';
+import { DeleteCartsByIdsDto } from './dto/delete-carts-by-ids.dto';
 
 @Controller('carts')
 @UseGuards(AuthGuard())
@@ -52,6 +53,19 @@ export class CartsController {
   deleteCart(@Param('id') id: number, @GetUser() user: User): Promise<void> {
     this.loggor.verbose(`User "${user.username}" delete cart. id: ${id}`);
     return this.cartsService.deleteCart(id, user);
+  }
+
+  @Post('/delete/ids')
+  deleteCartByIds(
+    @Body() deleteCartsByIdsDto: DeleteCartsByIdsDto,
+    @GetUser() user: User,
+  ): Promise<void> {
+    this.loggor.verbose(
+      `User "${user.username}" delete cart. ids: ${JSON.stringify(
+        deleteCartsByIdsDto,
+      )}`,
+    );
+    return this.cartsService.deleteCartByIds(deleteCartsByIdsDto, user);
   }
 
   @Patch('/:id')

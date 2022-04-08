@@ -1,13 +1,18 @@
 import { Order } from './order.entity';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
-import { EntityRepository, Repository } from 'typeorm';
+import { Connection, EntityRepository, Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { User } from '../auth/user.entity';
 import { OrderStatus } from './order-status.enum';
+import { OrderDetail } from '../order-details/order-detail.entity';
 
 @EntityRepository(Order)
 export class OrdersRepository extends Repository<Order> {
   private logger = new Logger('OrdersRepository', { timestamp: true });
+
+  constructor(private connection: Connection) {
+    super();
+  }
 
   async createOrder(
     createOrderDto: CreateOrderDto,
@@ -16,11 +21,33 @@ export class OrdersRepository extends Repository<Order> {
     const tmp = Object.assign({} as Order, createOrderDto);
 
     tmp.user = user;
-    tmp.status = OrderStatus.TO_PAID;
+    tmp.status = OrderStatus.Pre;
     tmp.create_time = `${new Date().getTime()}`;
     tmp.orderDetails.forEach((item) => {
-      item.status = OrderStatus.TO_PAID;
+      item.status = OrderStatus.Pre;
     });
+
+    try {
+      const preOrder = await this.findOneOrFail({
+        user,
+        status: OrderStatus.Pre,
+      });
+      if (preOrder) {
+        await this.deleteOrder(preOrder.id, user);
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to find order with ${OrderStatus.Pre} for user "${user.username}".`,
+      );
+    }
+
+    // const address =
+    //   user.addresses?.find((item) => item.isDefault === 1) ??
+    //   user.addresses[0] ??
+    //   '';
+
+    // tmp.receive_info =
+    //   address && `${address.receiver} ${address.mobile} ${address.destination}`;
 
     const order = this.create(tmp);
 
@@ -36,6 +63,28 @@ export class OrdersRepository extends Repository<Order> {
         error.stack,
       );
       throw new InternalServerErrorException();
+    }
+  }
+
+  async deleteOrder(id: string, user: User) {
+    // 创建一个事务
+    const queryRunner = this.connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.delete(OrderDetail, { order: id });
+      await queryRunner.manager.delete(Order, { id: id, user: user });
+
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      //如果遇到错误，可以回滚事务
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      //你需要手动实例化并部署一个queryRunner
+      await queryRunner.release();
     }
   }
 }

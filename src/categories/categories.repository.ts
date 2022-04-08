@@ -24,16 +24,12 @@ export class CategoriesRepository extends Repository<Category> {
     categories.forEach((item) => {
       if (item.parentId === 0) {
         map.set(item.id, item);
+        map.get(item.id).children = [];
       }
     });
     categories.forEach((item) => {
       if (item.parentId !== 0) {
-        const tmp = map.get(item.parentId);
-        if (tmp.children) {
-          tmp.children.push(item);
-        } else {
-          tmp.children = [item];
-        }
+        map.get(item.parentId).children.push(item);
       }
     });
     return Array.from(map.values());

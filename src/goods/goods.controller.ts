@@ -11,7 +11,8 @@ export class GoodsController {
   constructor(private goodsService: GoodsService) {}
 
   @Get('/detail/:id')
-  getGoodDetailById(@Param('id') id: number): Promise<GoodDetail> {
+  getGoodDetailById(@Param('id') id: string): Promise<GoodDetail> {
+    this.loggor.verbose(`retrieving goods by id:${id}`);
     return this.goodsService.getGoodDetailById(id);
   }
 

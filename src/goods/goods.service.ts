@@ -12,7 +12,7 @@ export class GoodsService {
     private goodsRepository: GoodsRepository,
   ) {}
 
-  async getGoodDetailById(id: number): Promise<GoodDetail> {
+  async getGoodDetailById(id: string): Promise<GoodDetail> {
     return this.goodsRepository.getGoodDetailById(id);
   }
 

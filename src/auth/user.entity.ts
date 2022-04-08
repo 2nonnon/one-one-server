@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Cart } from './../carts/cart.entity';
 import { Address } from './../addresses/address.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
@@ -12,6 +13,7 @@ export class User {
   username: string;
 
   @Column()
+  @Exclude({ toPlainOnly: true })
   password: string;
 
   @OneToMany(() => Address, (address) => address.user)

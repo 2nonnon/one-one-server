@@ -1,4 +1,5 @@
 export enum OrderStatus {
+  Pre = 'Pre',
   TO_PAID = 'TO_PAID',
   TO_SEND = 'TO_SEND',
   TO_DEAL = 'TO_DEAL',
