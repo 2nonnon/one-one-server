@@ -5,6 +5,8 @@ import { User } from '../auth/user.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Order } from './order.entity';
 import { OrdersRepository } from './order.repository';
+import { GetOrdersPageDto } from './dto/get-orders-page.dto';
+import { OrdersPage } from './orders-page.interface';
 
 @Injectable()
 export class OrdersService {
@@ -26,6 +28,13 @@ export class OrdersService {
       throw new NotFoundException(`order with ID "${id}" not found`);
     }
     return order;
+  }
+
+  async getOrdersPage(
+    getOrdersPageDto: GetOrdersPageDto,
+    user: User,
+  ): Promise<OrdersPage> {
+    return this.ordersRepository.getOrdersPage(getOrdersPageDto, user);
   }
 
   async createOrder(

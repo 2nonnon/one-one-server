@@ -1,3 +1,4 @@
+import { Sort } from './sort.enum';
 import { GoodsPage } from './goods-page.interface';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
@@ -8,10 +9,23 @@ import { GoodDetail } from './good-detail.interface';
 @EntityRepository(Good)
 export class GoodsRepository extends Repository<Good> {
   private logger = new Logger('GoodsRepository', { timestamp: true });
+  private sortFuc = {
+    [Sort.TIME]: (arr: Good[]) => {
+      return arr.sort((a, b) => parseInt(b.sale_time) - parseInt(a.sale_time));
+    },
+    [Sort.SOLED]: (arr: Good[]) => {
+      return arr.sort((a, b) => b.sold - a.sold);
+    },
+    [Sort.PRICE]: (arr: Good[]) => {
+      return arr.sort((a, b) => a.market_price - b.market_price);
+    },
+    [Sort.PRICE_DES]: (arr: Good[]) => {
+      return arr.sort((a, b) => b.market_price - a.market_price);
+    },
+  };
 
   async getGoods(getGoodsPageDto: GetGoodsPageDto): Promise<GoodsPage> {
-    const { search, current_page, page_size, category, order } =
-      getGoodsPageDto;
+    const { search, current_page, page_size, category, sort } = getGoodsPageDto;
     const query = this.createQueryBuilder('good').leftJoinAndSelect(
       'good.categories',
       'category',
@@ -34,11 +48,12 @@ export class GoodsRepository extends Repository<Good> {
 
     if (category) {
       tmp = tmp.filter((good) =>
-        good.categories.some((item) => item.name === category),
+        good.categories.some((item) => item.id === category),
       );
     }
 
-    if (order) {
+    if (sort) {
+      tmp = this.sortFuc[sort](tmp);
     }
 
     const result = {} as GoodsPage;

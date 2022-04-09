@@ -13,9 +13,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/user.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { GetOrdersPageDto } from './dto/get-orders-page.dto';
 import { UpdateOrderReceiveInfoDto } from './dto/update-order-receive-info.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { Order } from './order.entity';
+import { OrdersPage } from './orders-page.interface';
 import { OrdersService } from './orders.service';
 
 @Controller('orders')
@@ -32,13 +34,24 @@ export class OrdersController {
     return this.ordersService.getOrders(user);
   }
 
-  // 获取用户全部订单
+  // 通过id获取订单
   @Get('/:id')
   getOrder(@Param('id') id: string, @GetUser() user: User): Promise<Order> {
     this.loggor.verbose(
       `User "${user.username}" retrieving an order by id:${id}`,
     );
     return this.ordersService.getOrder(id, user);
+  }
+
+  @Post('/page')
+  getOrdersPage(
+    @Body() getOrdersPageDto: GetOrdersPageDto,
+    @GetUser() user: User,
+  ): Promise<OrdersPage> {
+    this.loggor.verbose(
+      `retrieving orders by ${JSON.stringify(getOrdersPageDto)}`,
+    );
+    return this.ordersService.getOrdersPage(getOrdersPageDto, user);
   }
 
   // 创建订单

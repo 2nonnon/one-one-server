@@ -1,5 +1,6 @@
+import { Sort } from './../sort.enum';
 import { Type } from 'class-transformer';
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsEnum } from 'class-validator';
 
 export class GetGoodsPageDto {
   @IsOptional()
@@ -13,10 +14,10 @@ export class GetGoodsPageDto {
   page_size: number;
 
   @IsOptional()
-  @IsString()
-  category?: string;
+  @Type(() => Number)
+  category?: number;
 
   @IsOptional()
-  @IsString()
-  order?: string;
+  @IsEnum(Sort)
+  sort?: Sort;
 }

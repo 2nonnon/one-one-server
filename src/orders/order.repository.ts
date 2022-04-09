@@ -5,6 +5,8 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { User } from '../auth/user.entity';
 import { OrderStatus } from './order-status.enum';
 import { OrderDetail } from '../order-details/order-detail.entity';
+import { GetOrdersPageDto } from './dto/get-orders-page.dto';
+import { OrdersPage } from './orders-page.interface';
 
 @EntityRepository(Order)
 export class OrdersRepository extends Repository<Order> {
@@ -64,6 +66,34 @@ export class OrdersRepository extends Repository<Order> {
       );
       throw new InternalServerErrorException();
     }
+  }
+
+  async getOrdersPage(
+    getOrdersPageDto: GetOrdersPageDto,
+    user: User,
+  ): Promise<OrdersPage> {
+    const { current_page, page_size, status } = getOrdersPageDto;
+    let tmp: Order[];
+    try {
+      tmp = await this.find({ user });
+    } catch (error) {
+      this.logger.error(`Failed to get orders`, error.stack);
+      throw new InternalServerErrorException();
+    }
+
+    if (status) {
+      tmp = tmp.filter((item) => item.status === status);
+    }
+
+    const result = {} as OrdersPage;
+
+    result.total = tmp.length;
+    result.orders = tmp.slice(
+      (current_page - 1) * page_size,
+      current_page * page_size,
+    );
+
+    return result;
   }
 
   async deleteOrder(id: string, user: User) {

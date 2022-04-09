@@ -32,6 +32,9 @@ export class Good {
   @Column()
   total_stock: number;
 
+  @Column({ default: 0 })
+  sold: number;
+
   @Column()
   sale_time: string;
 
