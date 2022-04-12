@@ -31,12 +31,6 @@ export class GoodsRepository extends Repository<Good> {
       'category',
     );
 
-    if (search) {
-      query.andWhere('(LOWER(good.name) LIKE LOWER(:search)', {
-        search: `%${search}%`,
-      });
-    }
-
     let tmp: Good[];
 
     try {
@@ -44,6 +38,10 @@ export class GoodsRepository extends Repository<Good> {
     } catch (error) {
       this.logger.error(`Failed to get goods`, error.stack);
       throw new InternalServerErrorException();
+    }
+
+    if (search) {
+      tmp = tmp.filter((good) => good.name.includes(search));
     }
 
     if (category) {
