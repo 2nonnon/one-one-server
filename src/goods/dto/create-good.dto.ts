@@ -1,5 +1,20 @@
 import { Type } from 'class-transformer';
-import { IsString } from 'class-validator';
+import { IsArray, IsString } from 'class-validator';
+
+interface IAttribute {
+  id: number;
+  name: string;
+  parentId: number;
+}
+
+interface CreateSkuDto {
+  name: string;
+  img_url: string;
+  market_price: number;
+  price: number;
+  stock: number;
+  attributes: IAttribute[];
+}
 
 export class CreateGoodDto {
   @IsString()
@@ -20,6 +35,15 @@ export class CreateGoodDto {
   @Type(() => Number)
   total_stock: number;
 
-  @IsString()
-  sale_time: string;
+  @IsArray()
+  banner: string[];
+
+  @IsArray()
+  detail: string[];
+
+  @IsArray()
+  categories: number[];
+
+  @IsArray()
+  skus: CreateSkuDto[];
 }

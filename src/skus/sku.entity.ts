@@ -27,7 +27,7 @@ export class Sku {
   @Column()
   price: number;
 
-  @Column()
+  @Column({ default: 0 })
   sold: number;
 
   @Column()

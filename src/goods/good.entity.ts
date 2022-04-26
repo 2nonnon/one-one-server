@@ -12,7 +12,7 @@ import {
 @Entity()
 export class Good {
   @PrimaryGeneratedColumn('increment')
-  id: string;
+  id?: string;
 
   @Column()
   cover_url: string;
@@ -33,10 +33,16 @@ export class Good {
   total_stock: number;
 
   @Column({ default: 0 })
-  sold: number;
+  sold?: number;
 
-  @Column()
-  sale_time: string;
+  @Column({ default: `${Date.now()}` })
+  sale_time?: string;
+
+  @Column('simple-array', { default: [] })
+  banner: string[];
+
+  @Column('simple-array', { default: [] })
+  detail: string[];
 
   @ManyToMany(() => Category, {
     cascade: true,
@@ -44,6 +50,8 @@ export class Good {
   @JoinTable()
   categories: Category[];
 
-  @OneToMany(() => Sku, (sku) => sku.good)
+  @OneToMany(() => Sku, (sku) => sku.good, {
+    cascade: true,
+  })
   skus: Sku[];
 }

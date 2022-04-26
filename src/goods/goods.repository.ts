@@ -1,3 +1,5 @@
+import { Sku } from './../skus/sku.entity';
+import { Category } from './../categories/category.entity';
 import { Sort } from './sort.enum';
 import { GoodsPage } from './goods-page.interface';
 import { InternalServerErrorException, Logger } from '@nestjs/common';
@@ -5,6 +7,8 @@ import { EntityRepository, Repository } from 'typeorm';
 import { GetGoodsPageDto } from './dto/get-goods-page.dto';
 import { Good } from './good.entity';
 import { GoodDetail } from './good-detail.interface';
+import { User } from 'src/auth/user.entity';
+import { CreateGoodDto } from './dto/create-good.dto';
 
 @EntityRepository(Good)
 export class GoodsRepository extends Repository<Good> {
@@ -23,6 +27,10 @@ export class GoodsRepository extends Repository<Good> {
       return arr.sort((a, b) => b.market_price - a.market_price);
     },
   };
+
+  constructor() {
+    super();
+  }
 
   async getGoods(getGoodsPageDto: GetGoodsPageDto): Promise<GoodsPage> {
     const { search, current_page, page_size, category, sort } = getGoodsPageDto;
@@ -88,5 +96,46 @@ export class GoodsRepository extends Repository<Good> {
     const goodDetail = Object.assign({} as GoodDetail, good);
     goodDetail.attributes = attributes;
     return goodDetail;
+  }
+
+  async createGood(createGoodDto: CreateGoodDto, user: User): Promise<Good> {
+    const queryRunner = this.manager.connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const categories = await queryRunner.manager.findByIds(
+        Category,
+        createGoodDto.categories,
+      );
+      // const skus = await Promise.all(
+      //   createGoodDto.skus.map((item) =>
+      //     queryRunner.manager.save(queryRunner.manager.create(Sku, item)),
+      //   ),
+      // );
+      const skus = createGoodDto.skus.map((item) =>
+        queryRunner.manager.create(Sku, item),
+      );
+
+      const good = Object.assign(createGoodDto, { categories, skus }) as Good;
+
+      const goodInstance = queryRunner.manager.create(Good, good);
+
+      // console.log(goodInstance);
+
+      await queryRunner.manager.save(goodInstance);
+
+      await queryRunner.commitTransaction();
+
+      return good;
+    } catch (err) {
+      //如果遇到错误，可以回滚事务
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      //你需要手动实例化并部署一个queryRunner
+      await queryRunner.release();
+    }
   }
 }
