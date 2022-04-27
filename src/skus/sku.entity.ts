@@ -33,11 +33,11 @@ export class Sku {
   @Column()
   stock: number;
 
-  @ManyToOne(() => Good, (user) => user.skus, { eager: false })
+  @ManyToOne(() => Good, (good) => good.skus, { eager: false })
   @Exclude({ toPlainOnly: true })
   good: Good;
 
-  @ManyToMany(() => Attribute, { eager: true })
+  @ManyToMany(() => Attribute)
   @JoinTable()
   attributes: Attribute[];
 }
