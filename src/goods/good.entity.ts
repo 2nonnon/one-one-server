@@ -14,6 +14,9 @@ export class Good {
   @PrimaryGeneratedColumn('increment')
   id?: string;
 
+  @Column({ default: `${Date.now()}` })
+  code: string;
+
   @Column()
   cover_url: string;
 
@@ -31,6 +34,9 @@ export class Good {
 
   @Column()
   total_stock: number;
+
+  @Column({ default: false })
+  hasSku: boolean;
 
   @Column({ default: 0 })
   sold?: number;

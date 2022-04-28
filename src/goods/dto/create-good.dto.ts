@@ -20,11 +20,17 @@ export class CreateGoodDto {
   @IsString()
   cover_url: string;
 
+  @IsString()
+  code: string;
+
   @Type(() => Number)
   market_price: number;
 
   @Type(() => Number)
   price: number;
+
+  @Type(() => Boolean)
+  hasSku: boolean;
 
   @IsString()
   name: string;
