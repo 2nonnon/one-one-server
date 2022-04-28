@@ -8,6 +8,7 @@ import {
   Post,
   Body,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { GoodsService } from './goods.service';
 import { GoodDetail } from './good-detail.interface';
@@ -35,6 +36,13 @@ export class GoodsController {
       `retrieving goods by ${JSON.stringify(getGoodsPageDto)}`,
     );
     return this.goodsService.getGoods(getGoodsPageDto);
+  }
+
+  @Delete('/:id')
+  @UseGuards(AuthGuard())
+  deleteGood(@Param('id') id: string, @GetUser() user: User): Promise<void> {
+    this.loggor.verbose(`retrieving goods by id:${id}`);
+    return this.goodsService.deleteGood(id, user);
   }
 
   @Post('/create')

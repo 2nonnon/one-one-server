@@ -2,7 +2,11 @@ import { Sku } from './../skus/sku.entity';
 import { Category } from './../categories/category.entity';
 import { Sort } from './sort.enum';
 import { GoodsPage } from './goods-page.interface';
-import { InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { GetGoodsPageDto } from './dto/get-goods-page.dto';
 import { Good } from './good.entity';
@@ -162,6 +166,28 @@ export class GoodsRepository extends Repository<Good> {
       await queryRunner.commitTransaction();
 
       return goodDetail;
+    } catch (err) {
+      //如果遇到错误，可以回滚事务
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      //你需要手动实例化并部署一个queryRunner
+      await queryRunner.release();
+    }
+  }
+
+  async deleteGood(id: string, user: User): Promise<void> {
+    // 创建一个事务
+    const queryRunner = this.manager.connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.delete(Sku, { good: id });
+      await queryRunner.manager.delete(Good, { id: id });
+
+      await queryRunner.commitTransaction();
     } catch (err) {
       //如果遇到错误，可以回滚事务
       console.log(err);

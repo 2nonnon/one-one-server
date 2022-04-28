@@ -23,6 +23,10 @@ export class GoodsService {
     return this.goodsRepository.getGoods(getGoodsPageDto);
   }
 
+  async deleteGood(id: string, user: User): Promise<void> {
+    return this.goodsRepository.deleteGood(id, user);
+  }
+
   async createGood(createGoodDto: CreateGoodDto, user: User): Promise<Good> {
     return this.goodsRepository.createGood(createGoodDto, user);
   }
