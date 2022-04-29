@@ -9,14 +9,17 @@ import {
   Body,
   UseGuards,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import { GoodsService } from './goods.service';
 import { GoodDetail } from './good-detail.interface';
 import { CreateGoodDto } from './dto/create-good.dto';
 import { Good } from './good.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from 'src/auth/get-user.decorator';
-import { User } from 'src/auth/user.entity';
+import { GetUser } from '../auth/get-user.decorator';
+import { User } from '../auth/user.entity';
+import { UpdateGoodSkuDto } from './dto/update-good-sku.dto';
+import { UpdateGoodSpuDto } from './dto/update-good-spu.dto';
 
 @Controller('goods')
 export class GoodsController {
@@ -53,5 +56,35 @@ export class GoodsController {
   ): Promise<Good> {
     this.loggor.verbose(`retrieving goods by ${JSON.stringify(createGoodDto)}`);
     return this.goodsService.createGood(createGoodDto, user);
+  }
+
+  @Patch('/:id/spu')
+  @UseGuards(AuthGuard())
+  updateGoodSpu(
+    @Param('id') id: number,
+    @Body() updateGoodSpuDto: UpdateGoodSpuDto,
+    @GetUser() user: User,
+  ): Promise<Good> {
+    this.loggor.verbose(
+      `User "${user.username}" update good ${id}, Good ${JSON.stringify(
+        updateGoodSpuDto,
+      )}`,
+    );
+    return this.goodsService.updateGoodSpu(id, updateGoodSpuDto, user);
+  }
+
+  @Patch('/:id/sku')
+  @UseGuards(AuthGuard())
+  updateGoodSku(
+    @Param('id') id: number,
+    @Body() updateGoodSkuDto: UpdateGoodSkuDto,
+    @GetUser() user: User,
+  ): Promise<Good> {
+    this.loggor.verbose(
+      `User "${user.username}" update good ${id}, Good ${JSON.stringify(
+        updateGoodSkuDto,
+      )}`,
+    );
+    return this.goodsService.updateGoodSku(id, updateGoodSkuDto, user);
   }
 }

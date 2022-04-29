@@ -13,6 +13,8 @@ import { Good } from './good.entity';
 import { GoodDetail } from './good-detail.interface';
 import { User } from 'src/auth/user.entity';
 import { CreateGoodDto } from './dto/create-good.dto';
+import { UpdateGoodSkuDto } from './dto/update-good-sku.dto';
+import { UpdateGoodSpuDto } from './dto/update-good-spu.dto';
 
 interface Node {
   id: number;
@@ -103,42 +105,6 @@ export class GoodsRepository extends Repository<Good> {
     return result;
   }
 
-  // async getGoodDetailById(id: string): Promise<GoodDetail> {
-  //   const query = this.createQueryBuilder('good');
-  //   query
-  //     .where({ id })
-  //     .leftJoinAndSelect('good.categories', 'category')
-  //     .leftJoinAndSelect('good.skus', 'sku');
-
-  //   const [good] = await query.getMany();
-  //   const skus = good.skus;
-  //   const attributes = {};
-  //   if (skus?.length > 0) {
-  //     const map = new Map();
-  //     skus.forEach(async (sku) => {
-  //       const query = this.createQueryBuilder('sku');
-  //       query
-  //         .where({ id: sku.id })
-  //         .leftJoinAndSelect('sku.attributes', 'attribute');
-
-  //       const [tmp] = await query.getMany();
-  //       console.log(tmp);
-  //       sku.attributes?.forEach((attr) => {
-  //         if (attr.parentId === 0 && !attributes[attr.name]) {
-  //           attributes[attr.name] = [];
-  //           map.set(attr.id, attr.name);
-  //         } else if (attr.parentId !== 0) {
-  //           attributes[map.get(attr.parentId)].push(attr.name);
-  //         }
-  //       });
-  //     });
-  //   }
-  //   console.log(good);
-  //   const goodDetail = Object.assign({} as GoodDetail, good);
-  //   goodDetail.attributes = attributes;
-  //   return goodDetail;
-  // }
-
   async getGoodDetailById(id: string): Promise<GoodDetail> {
     const queryRunner = this.manager.connection.createQueryRunner();
 
@@ -209,11 +175,7 @@ export class GoodsRepository extends Repository<Good> {
         Category,
         createGoodDto.categories,
       );
-      // const skus = await Promise.all(
-      //   createGoodDto.skus.map((item) =>
-      //     queryRunner.manager.save(queryRunner.manager.create(Sku, item)),
-      //   ),
-      // );
+
       const skus = createGoodDto.skus.map((item) =>
         queryRunner.manager.create(Sku, item),
       );
@@ -222,13 +184,86 @@ export class GoodsRepository extends Repository<Good> {
 
       const goodInstance = queryRunner.manager.create(Good, good);
 
-      // console.log(goodInstance);
-
       await queryRunner.manager.save(goodInstance);
 
       await queryRunner.commitTransaction();
 
       return good;
+    } catch (err) {
+      //如果遇到错误，可以回滚事务
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      //你需要手动实例化并部署一个queryRunner
+      await queryRunner.release();
+    }
+  }
+
+  async updateGoodSpu(
+    id: number,
+    updateGoodSpuDto: UpdateGoodSpuDto,
+    user: User,
+  ): Promise<Good> {
+    const queryRunner = this.manager.connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const preGood = await queryRunner.manager.findOneOrFail(Good, id);
+
+      const categories = await queryRunner.manager.findByIds(
+        Category,
+        updateGoodSpuDto.categories,
+      );
+
+      const good = Object.assign(preGood, updateGoodSpuDto, {
+        categories,
+      }) as Good;
+
+      const goodInstance = queryRunner.manager.create(Good, good);
+
+      const newGood = await queryRunner.manager.save(goodInstance);
+
+      await queryRunner.commitTransaction();
+
+      return newGood;
+    } catch (err) {
+      //如果遇到错误，可以回滚事务
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      //你需要手动实例化并部署一个queryRunner
+      await queryRunner.release();
+    }
+  }
+
+  async updateGoodSku(
+    id: number,
+    updateGoodSkuDto: UpdateGoodSkuDto,
+    user: User,
+  ): Promise<Good> {
+    const queryRunner = this.manager.connection.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const preGood = await queryRunner.manager.findOneOrFail(Good, id);
+
+      const skus = updateGoodSkuDto.skus.map((item) =>
+        queryRunner.manager.create(Sku, item),
+      );
+
+      const good = Object.assign(preGood, updateGoodSkuDto, { skus }) as Good;
+
+      const goodInstance = queryRunner.manager.create(Good, good);
+
+      const newGood = await queryRunner.manager.save(goodInstance);
+
+      await queryRunner.commitTransaction();
+
+      return newGood;
     } catch (err) {
       //如果遇到错误，可以回滚事务
       console.log(err);

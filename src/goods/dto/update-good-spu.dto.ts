@@ -1,8 +1,12 @@
 import { Type } from 'class-transformer';
 import { IsArray, IsString } from 'class-validator';
-import { CreateSkuDto } from '../../skus/dto/create-sku.dto';
 
-export class CreateGoodDto {
+export class UpdateGoodSpuDto {
+  @Type(() => Number)
+  sold: number;
+
+  @IsString()
+  sale_time: string;
   @IsString()
   cover_url: string;
 
@@ -35,7 +39,4 @@ export class CreateGoodDto {
 
   @IsArray()
   categories: number[];
-
-  @IsArray()
-  skus: CreateSkuDto[];
 }

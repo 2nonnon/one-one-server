@@ -7,6 +7,8 @@ import { GoodDetail } from './good-detail.interface';
 import { CreateGoodDto } from './dto/create-good.dto';
 import { User } from '../auth/user.entity';
 import { Good } from './good.entity';
+import { UpdateGoodSkuDto } from './dto/update-good-sku.dto';
+import { UpdateGoodSpuDto } from './dto/update-good-spu.dto';
 
 @Injectable()
 export class GoodsService {
@@ -29,5 +31,21 @@ export class GoodsService {
 
   async createGood(createGoodDto: CreateGoodDto, user: User): Promise<Good> {
     return this.goodsRepository.createGood(createGoodDto, user);
+  }
+
+  async updateGoodSpu(
+    id: number,
+    updateGoodSpuDto: UpdateGoodSpuDto,
+    user: User,
+  ): Promise<Good> {
+    return this.goodsRepository.updateGoodSpu(id, updateGoodSpuDto, user);
+  }
+
+  async updateGoodSku(
+    id: number,
+    updateGoodSkuDto: UpdateGoodSkuDto,
+    user: User,
+  ): Promise<Good> {
+    return this.goodsRepository.updateGoodSku(id, updateGoodSkuDto, user);
   }
 }
