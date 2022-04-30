@@ -16,7 +16,7 @@ export class OrdersRepository extends Repository<Order> {
     super();
   }
 
-  async createOrder(
+  async userCreateOrder(
     createOrderDto: CreateOrderDto,
     user: User,
   ): Promise<Order> {
@@ -35,7 +35,7 @@ export class OrdersRepository extends Repository<Order> {
         status: OrderStatus.Pre,
       });
       if (preOrder) {
-        await this.deleteOrder(preOrder.id, user);
+        await this.userDeleteOrder(preOrder.id, user);
       }
     } catch (error) {
       this.logger.error(
@@ -70,25 +70,18 @@ export class OrdersRepository extends Repository<Order> {
 
   async getOrdersPage(
     getOrdersPageDto: GetOrdersPageDto,
-    user: User,
+    orders: Order[],
   ): Promise<OrdersPage> {
     const { current_page, page_size, status } = getOrdersPageDto;
-    let tmp: Order[];
-    try {
-      tmp = await this.find({ user });
-    } catch (error) {
-      this.logger.error(`Failed to get orders`, error.stack);
-      throw new InternalServerErrorException();
-    }
 
     if (status) {
-      tmp = tmp.filter((item) => item.status === status);
+      orders = orders.filter((item) => item.status === status);
     }
 
     const result = {} as OrdersPage;
 
-    result.total = tmp.length;
-    result.orders = tmp.slice(
+    result.total = orders.length;
+    result.orders = orders.slice(
       (current_page - 1) * page_size,
       current_page * page_size,
     );
@@ -96,7 +89,7 @@ export class OrdersRepository extends Repository<Order> {
     return result;
   }
 
-  async deleteOrder(id: string, user: User) {
+  async userDeleteOrder(id: string, user: User) {
     // 创建一个事务
     const queryRunner = this.connection.createQueryRunner();
 
@@ -116,5 +109,23 @@ export class OrdersRepository extends Repository<Order> {
       //你需要手动实例化并部署一个queryRunner
       await queryRunner.release();
     }
+  }
+
+  async updateOrderStatus(status: OrderStatus, order: Order): Promise<Order> {
+    order.status = status;
+    order.orderDetails.forEach((item) => {
+      item.status = status;
+    });
+
+    return await this.save(order);
+  }
+
+  async updateOrderReceiveInfo(
+    receive_info: string,
+    order: Order,
+  ): Promise<Order> {
+    order.receive_info = receive_info;
+
+    return await this.save(order);
   }
 }

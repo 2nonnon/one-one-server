@@ -27,36 +27,40 @@ export class OrdersController {
 
   constructor(private ordersService: OrdersService) {}
 
-  // 获取用户全部订单
+  // 用户获取全部订单
   @Get()
-  getOrders(@GetUser() user: User): Promise<Order[]> {
+  userGetOrders(@GetUser() user: User): Promise<Order[]> {
     this.loggor.verbose(`User "${user.username}" retrieving all orders`);
-    return this.ordersService.getOrders(user);
+    return this.ordersService.userGetOrders(user);
   }
 
-  // 通过id获取订单
+  // 用户通过id获取订单
   @Get('/:id')
-  getOrder(@Param('id') id: string, @GetUser() user: User): Promise<Order> {
+  userGetOrderById(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<Order> {
     this.loggor.verbose(
       `User "${user.username}" retrieving an order by id:${id}`,
     );
-    return this.ordersService.getOrder(id, user);
+    return this.ordersService.userGetOrderById(id, user);
   }
 
+  // 用户分页获取订单
   @Post('/page')
-  getOrdersPage(
+  userGetOrdersPage(
     @Body() getOrdersPageDto: GetOrdersPageDto,
     @GetUser() user: User,
   ): Promise<OrdersPage> {
     this.loggor.verbose(
       `retrieving orders by ${JSON.stringify(getOrdersPageDto)}`,
     );
-    return this.ordersService.getOrdersPage(getOrdersPageDto, user);
+    return this.ordersService.userGetOrdersPage(getOrdersPageDto, user);
   }
 
-  // 创建订单
+  // 用户创建订单
   @Post()
-  createOrder(
+  userCreateOrder(
     @Body() createOrderDto: CreateOrderDto,
     @GetUser() user: User,
   ): Promise<Order> {
@@ -65,18 +69,83 @@ export class OrdersController {
         createOrderDto,
       )}`,
     );
-    return this.ordersService.createOrder(createOrderDto, user);
+    return this.ordersService.userCreateOrder(createOrderDto, user);
   }
 
-  // 删除订单
+  // 用户删除订单
   @Delete('/:id')
-  deleteOrder(@Param('id') id: string, @GetUser() user: User): Promise<void> {
+  userDeleteOrder(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<void> {
     this.loggor.verbose(`User "${user.username}" delete an order by id: ${id}`);
-    return this.ordersService.deleteOrder(id, user);
+    return this.ordersService.userDeleteOrder(id, user);
   }
 
-  // 修改订单状态
+  // 用户修改订单状态
   @Patch('/:id/status')
+  userUpdateOrderStatus(
+    @Param('id') id: string,
+    @Body() updateOrderStatusDto: UpdateOrderStatusDto,
+    @GetUser() user: User,
+  ): Promise<Order> {
+    this.loggor.verbose(
+      `User "${
+        user.username
+      }" update an order status by id: ${id} with ${JSON.stringify(
+        updateOrderStatusDto,
+      )}`,
+    );
+    const { status } = updateOrderStatusDto;
+    return this.ordersService.userUpdateOrderStatus(id, status, user);
+  }
+
+  // 用户修改订单地址
+  @Patch('/:id/receive')
+  userUpdateOrderReceiveInfo(
+    @Param('id') id: string,
+    @Body() updateOrderReceiveInfoDto: UpdateOrderReceiveInfoDto,
+    @GetUser() user: User,
+  ): Promise<Order> {
+    this.loggor.verbose(
+      `User "${
+        user.username
+      }" update an order status by id: ${id} with ${JSON.stringify(
+        updateOrderReceiveInfoDto,
+      )}`,
+    );
+    const { receive_info } = updateOrderReceiveInfoDto;
+    return this.ordersService.userUpdateOrderReceiveInfo(
+      id,
+      receive_info,
+      user,
+    );
+  }
+
+  // 管理员通过id获取订单
+  @Get('/admin/:id')
+  getOrderById(@Param('id') id: string, @GetUser() user: User): Promise<Order> {
+    this.loggor.verbose(
+      `User "${user.username}" retrieving an order by id:${id}`,
+    );
+    return this.ordersService.getOrderById(id);
+  }
+
+  // 管理员分页获取订单
+  @Post('/admin/page')
+  getOrdersPage(
+    @Body() getOrdersPageDto: GetOrdersPageDto,
+    @GetUser() user: User,
+  ): Promise<OrdersPage> {
+    this.loggor.verbose(
+      `User "${user.username}" retrieving orders by ${JSON.stringify(
+        getOrdersPageDto,
+      )}`,
+    );
+    return this.ordersService.getOrdersPage(getOrdersPageDto);
+  }
+  // 管理员修改订单状态
+  @Patch('/admin/:id/status')
   updateOrderStatus(
     @Param('id') id: string,
     @Body() updateOrderStatusDto: UpdateOrderStatusDto,
@@ -90,11 +159,11 @@ export class OrdersController {
       )}`,
     );
     const { status } = updateOrderStatusDto;
-    return this.ordersService.updateOrderStatus(id, status, user);
+    return this.ordersService.updateOrderStatus(id, status);
   }
 
-  // 修改订单地址
-  @Patch('/:id/receive')
+  // 管理员修改订单地址
+  @Patch('/admin/:id/receive')
   updateOrderReceiveInfo(
     @Param('id') id: string,
     @Body() updateOrderReceiveInfoDto: UpdateOrderReceiveInfoDto,
@@ -108,24 +177,6 @@ export class OrdersController {
       )}`,
     );
     const { receive_info } = updateOrderReceiveInfoDto;
-    return this.ordersService.updateOrderReceiveInfo(id, receive_info, user);
-  }
-
-  @Patch('/:id')
-  updateOrder(
-    @Param('id') id: string,
-    @Body() updateOrderDto: UpdateOrderReceiveInfoDto & UpdateOrderStatusDto,
-    @GetUser() user: User,
-  ): Promise<Order> {
-    this.loggor.verbose(
-      `User "${
-        user.username
-      }" update an order status by id: ${id} with ${JSON.stringify(
-        updateOrderDto,
-      )}`,
-    );
-    const { receive_info, status } = updateOrderDto;
-    this.ordersService.updateOrderStatus(id, status, user);
-    return this.ordersService.updateOrderReceiveInfo(id, receive_info, user);
+    return this.ordersService.updateOrderReceiveInfo(id, receive_info);
   }
 }
