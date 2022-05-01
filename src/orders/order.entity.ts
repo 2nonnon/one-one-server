@@ -15,14 +15,20 @@ export class Order extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: string;
 
-  @Column({ nullable: true })
+  @Column()
   receive_info: string;
 
   @Column()
   paid: number;
 
+  @Column({ default: 0 })
+  freight: number;
+
   @Column({ enum: OrderStatus })
   status: OrderStatus;
+
+  @Column({ nullable: true })
+  remark: string;
 
   @Column()
   create_time: string;
