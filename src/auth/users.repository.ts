@@ -27,4 +27,25 @@ export class UsersRepository extends Repository<User> {
       }
     }
   }
+
+  async createWxUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+    const { username, password } = authCredentialsDto;
+
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+
+    const user = this.create({ username, password: hash });
+
+    try {
+      await this.save(user);
+    } catch (error) {
+      if (error.code === '23505') {
+        const user = await this.findOneOrFail({ username });
+        user.password = hash;
+        await this.save(user);
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
+  }
 }

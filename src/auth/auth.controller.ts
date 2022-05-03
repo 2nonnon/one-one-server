@@ -1,5 +1,5 @@
 import { AuthService } from './auth.service';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 
 @Controller('auth')
@@ -16,5 +16,10 @@ export class AuthController {
     @Body() authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
     return this.authService.signIn(authCredentialsDto);
+  }
+
+  @Get('/wxsignin/:code')
+  wxSignIn(@Param('code') code: string): Promise<{ accessToken: string }> {
+    return this.authService.wxSignIn(code);
   }
 }
