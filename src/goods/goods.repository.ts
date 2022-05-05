@@ -117,14 +117,16 @@ export class GoodsRepository extends Repository<Good> {
       });
 
       const skus = good.skus;
-      const attrSet = new Set();
+      const attrSet: Node[] = [];
       skus.forEach((sku) => {
         sku.attributes.forEach((attr) => {
-          attrSet.add(attr);
+          if (attrSet.every((_) => _.id !== attr.id)) {
+            attrSet.push(attr);
+          }
         });
       });
 
-      const attributes = this.arrayToTree(Array.from(attrSet) as Node[]);
+      const attributes = this.arrayToTree(attrSet);
 
       const goodDetail = Object.assign({} as GoodDetail, good);
       goodDetail.attributes = attributes;
