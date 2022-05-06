@@ -1,3 +1,4 @@
+import { WxSignIn } from './wxSignIn.interface';
 import {
   ConflictException,
   InternalServerErrorException,
@@ -10,39 +11,39 @@ import * as bcrypt from 'bcryptjs';
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
   async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
-    const { username, password } = authCredentialsDto;
+    const { account, password } = authCredentialsDto;
 
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
 
-    const user = this.create({ username, password: hash });
+    const user = this.create({ account, password: hash });
 
     try {
       await this.save(user);
     } catch (error) {
       if (error.code === '23505') {
-        throw new ConflictException('Username already exists');
+        throw new ConflictException('Account already exists');
       } else {
         throw new InternalServerErrorException();
       }
     }
   }
 
-  async createWxUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
-    const { username, password } = authCredentialsDto;
+  async createWxUser(wxSignIn: WxSignIn): Promise<User> {
+    const { openid, session } = wxSignIn;
 
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(password, salt);
+    const hash = bcrypt.hashSync(session, salt);
 
-    const user = this.create({ username, password: hash });
+    const user = this.create({ openid, session: hash });
 
     try {
-      await this.save(user);
+      return await this.save(user);
     } catch (error) {
       if (error.code === '23505') {
-        const user = await this.findOneOrFail({ username });
-        user.password = hash;
-        await this.save(user);
+        const user = await this.findOneOrFail({ openid });
+        user.session = hash;
+        return await this.save(user);
       } else {
         throw new InternalServerErrorException();
       }

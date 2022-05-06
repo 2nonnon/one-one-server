@@ -9,10 +9,20 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
+  openid: string;
+
+  @Column({ nullable: true })
+  @Exclude({ toPlainOnly: true })
+  session: string;
+
+  @Column({ unique: true, default: `用户${Date.now() % 10e9}` })
   username: string;
 
-  @Column()
+  @Column({ unique: true, nullable: true })
+  account: string;
+
+  @Column({ nullable: true })
   @Exclude({ toPlainOnly: true })
   password: string;
 

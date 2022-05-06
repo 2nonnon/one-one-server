@@ -31,17 +31,17 @@ export class AuthService {
   async signIn(
     authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
-    const { username, password } = authCredentialsDto;
+    const { account, password } = authCredentialsDto;
     let user: User;
 
     try {
-      user = await this.usersRepository.findOneOrFail({ username });
+      user = await this.usersRepository.findOneOrFail({ account });
     } catch (error) {
       throw new NotFoundException(`用户名或密码错误`);
     }
 
     if (user && bcrypt.compareSync(password, user.password)) {
-      const payload: JwtPayload = { username, id: user.id };
+      const payload: JwtPayload = { account, id: user.id };
       const accessToken: string = this.jwtService.sign(payload);
       return { accessToken };
     } else {
@@ -50,20 +50,22 @@ export class AuthService {
   }
 
   async wxSignIn(code: string): Promise<{ accessToken: string }> {
-    const authCredentialsDto: AuthCredentialsDto = await new Promise(
-      (resolve) => {
-        this.server
-          .get(
-            `https://api.weixin.qq.com/sns/jscode2session?appid=${this.appid}&secret=${this.secret}&js_code=${code}&grant_type=authorization_code`,
-          )
-          .subscribe((value) => {
-            const data = value.data;
-            resolve({ username: data.openid, password: data.session_key });
-          });
-      },
-    );
+    const { openid, session } = await new Promise((resolve) => {
+      this.server
+        .get(
+          `https://api.weixin.qq.com/sns/jscode2session?appid=${this.appid}&secret=${this.secret}&js_code=${code}&grant_type=authorization_code`,
+        )
+        .subscribe((value) => {
+          const data = value.data;
+          resolve({ openid: data.openid, session: data.session_key });
+        });
+    });
 
-    await this.usersRepository.createWxUser(authCredentialsDto);
-    return this.signIn(authCredentialsDto);
+    const user = await this.usersRepository.createWxUser({ openid, session });
+
+    const payload: JwtPayload = { openid, id: user.id };
+
+    const accessToken: string = this.jwtService.sign(payload);
+    return { accessToken };
   }
 }
