@@ -89,4 +89,30 @@ export class AddressesController {
     );
     return this.addressesService.updateAddressChoose(id, user);
   }
+
+  // 兼容微信，patch 请求改 post
+  @Post('/:id')
+  wxUpdateAddress(
+    @Param('id') id: string,
+    @Body() createAddressDto: CreateAddressDto,
+    @GetUser() user: User,
+  ): Promise<Address> {
+    this.loggor.verbose(
+      `User "${
+        user.username
+      }" update address. id: ${id} update: ${JSON.stringify(createAddressDto)}`,
+    );
+    return this.addressesService.updateAddress(id, createAddressDto, user);
+  }
+
+  @Post('/:id/choose')
+  wxUpdateAddressChoose(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<Address> {
+    this.loggor.verbose(
+      `User "${user.username}" update address. id: ${id} update: choose`,
+    );
+    return this.addressesService.updateAddressChoose(id, user);
+  }
 }

@@ -26,13 +26,14 @@ export class CartsController {
 
   @Get()
   getCarts(@GetUser() user: User): Promise<Cart[]> {
-    this.loggor.verbose(`User "${user.username}" retrieving all Carts`);
+    console.log(user);
+    this.loggor.verbose(`User "${user.id}" retrieving all Carts`);
     return this.cartsService.getCarts(user);
   }
 
   @Get('/total')
   getTotal(@GetUser() user: User): Promise<number> {
-    this.loggor.verbose(`User "${user.username}" retrieving Carts total`);
+    this.loggor.verbose(`User "${user.id}" retrieving Carts total`);
     return this.cartsService.getTotal(user);
   }
 
@@ -42,7 +43,7 @@ export class CartsController {
     @GetUser() user: User,
   ): Promise<Cart> {
     this.loggor.verbose(
-      `User "${user.username}" creating a new Cart. Cart ${JSON.stringify(
+      `User "${user.id}" creating a new Cart. Cart ${JSON.stringify(
         createCartDto,
       )}`,
     );
@@ -51,7 +52,7 @@ export class CartsController {
 
   @Delete('/:id')
   deleteCart(@Param('id') id: number, @GetUser() user: User): Promise<void> {
-    this.loggor.verbose(`User "${user.username}" delete cart. id: ${id}`);
+    this.loggor.verbose(`User "${user.id}" delete cart. id: ${id}`);
     return this.cartsService.deleteCart(id, user);
   }
 
@@ -61,7 +62,7 @@ export class CartsController {
     @GetUser() user: User,
   ): Promise<void> {
     this.loggor.verbose(
-      `User "${user.username}" delete cart. ids: ${JSON.stringify(
+      `User "${user.id}" delete cart. ids: ${JSON.stringify(
         deleteCartsByIdsDto,
       )}`,
     );
@@ -75,7 +76,22 @@ export class CartsController {
     @GetUser() user: User,
   ): Promise<Cart> {
     this.loggor.verbose(
-      `User "${user.username}" update cart. id: ${id} update: ${JSON.stringify(
+      `User "${user.id}" update cart. id: ${id} update: ${JSON.stringify(
+        createCartDto,
+      )}`,
+    );
+    return this.cartsService.updateCart(id, createCartDto, user);
+  }
+
+  // 兼容微信
+  @Post('/:id')
+  wxUpdateCart(
+    @Param('id') id: number,
+    @Body() createCartDto: CreateCartDto,
+    @GetUser() user: User,
+  ): Promise<Cart> {
+    this.loggor.verbose(
+      `User "${user.id}" update cart. id: ${id} update: ${JSON.stringify(
         createCartDto,
       )}`,
     );

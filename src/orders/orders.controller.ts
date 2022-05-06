@@ -122,6 +122,93 @@ export class OrdersController {
     );
   }
 
+  // 用户修改订单状态和地址
+  @Patch('/:id/update')
+  userUpdateOrder(
+    @Param('id') id: string,
+    @Body() updateOrderDto: UpdateOrderReceiveInfoDto & UpdateOrderStatusDto,
+    @GetUser() user: User,
+  ): Promise<Order> {
+    this.loggor.verbose(
+      `User "${
+        user.username
+      }" update an order status by id: ${id} with ${JSON.stringify(
+        updateOrderDto,
+      )}`,
+    );
+    const { status, receive_info } = updateOrderDto;
+    this.ordersService.userUpdateOrderReceiveInfo(id, status, user);
+    return this.ordersService.userUpdateOrderReceiveInfo(
+      id,
+      receive_info,
+      user,
+    );
+  }
+
+  // 兼容weixin
+  // 用户修改订单状态
+  @Post('/:id/status')
+  wxUserUpdateOrderStatus(
+    @Param('id') id: string,
+    @Body() updateOrderStatusDto: UpdateOrderStatusDto,
+    @GetUser() user: User,
+  ): Promise<Order> {
+    this.loggor.verbose(
+      `User "${
+        user.username
+      }" update an order status by id: ${id} with ${JSON.stringify(
+        updateOrderStatusDto,
+      )}`,
+    );
+    const { status } = updateOrderStatusDto;
+    return this.ordersService.userUpdateOrderStatus(id, status, user);
+  }
+
+  // 用户修改订单地址
+  @Post('/:id/receive')
+  wxUserUpdateOrderReceiveInfo(
+    @Param('id') id: string,
+    @Body() updateOrderReceiveInfoDto: UpdateOrderReceiveInfoDto,
+    @GetUser() user: User,
+  ): Promise<Order> {
+    this.loggor.verbose(
+      `User "${
+        user.username
+      }" update an order status by id: ${id} with ${JSON.stringify(
+        updateOrderReceiveInfoDto,
+      )}`,
+    );
+    const { receive_info } = updateOrderReceiveInfoDto;
+    return this.ordersService.userUpdateOrderReceiveInfo(
+      id,
+      receive_info,
+      user,
+    );
+  }
+
+  // 用户修改订单状态和地址
+  @Post('/:id/update')
+  wxUserUpdateOrder(
+    @Param('id') id: string,
+    @Body() updateOrderDto: UpdateOrderReceiveInfoDto & UpdateOrderStatusDto,
+    @GetUser() user: User,
+  ): Promise<Order> {
+    this.loggor.verbose(
+      `User "${
+        user.username
+      }" update an order status by id: ${id} with ${JSON.stringify(
+        updateOrderDto,
+      )}`,
+    );
+    const { status, receive_info } = updateOrderDto;
+    this.ordersService.userUpdateOrderReceiveInfo(id, status, user);
+    return this.ordersService.userUpdateOrderReceiveInfo(
+      id,
+      receive_info,
+      user,
+    );
+  }
+
   // 管理员通过id获取订单
   @Get('/admin/:id')
   getOrderById(@Param('id') id: string, @GetUser() user: User): Promise<Order> {
