@@ -35,7 +35,7 @@ export class OrdersService {
     return order;
   }
 
-  async userGetOrderById(id: string, user: User): Promise<Order> {
+  async userGetOrderById(id: number, user: User): Promise<Order> {
     const order = await this.ordersRepository.findOneOrFail({
       where: { id, user },
     });
@@ -65,12 +65,12 @@ export class OrdersService {
     return this.ordersRepository.userCreateOrder(createOrderDto, user);
   }
 
-  async userDeleteOrder(id: string, user: User): Promise<void> {
+  async userDeleteOrder(id: number, user: User): Promise<void> {
     return this.ordersRepository.userDeleteOrder(id, user);
   }
 
   async userUpdateOrderStatus(
-    id: string,
+    id: number,
     status: OrderStatus,
     user: User,
   ): Promise<Order> {
@@ -80,7 +80,7 @@ export class OrdersService {
   }
 
   async userUpdateOrderReceiveInfo(
-    id: string,
+    id: number,
     receive_info: string,
     user: User,
   ): Promise<Order> {

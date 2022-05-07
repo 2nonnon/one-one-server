@@ -11,7 +11,7 @@ import {
 @Entity()
 export class OrderDetail extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
-  id: string;
+  id: number;
 
   @Column()
   goodId: number;

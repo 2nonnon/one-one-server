@@ -12,7 +12,7 @@ import {
 @Entity()
 export class Good {
   @PrimaryGeneratedColumn('increment')
-  id?: string;
+  id: number;
 
   @Column({ default: `${Date.now()}` })
   code: string;

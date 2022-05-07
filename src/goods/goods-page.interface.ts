@@ -1,5 +1,5 @@
 interface IGood {
-  id?: string;
+  id: number;
   cover_url: string;
   market_price: number;
   price: number;

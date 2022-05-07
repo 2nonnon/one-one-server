@@ -13,7 +13,7 @@ import {
 @Entity()
 export class Order extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
-  id: string;
+  id: number;
 
   @Column()
   receive_info: string;

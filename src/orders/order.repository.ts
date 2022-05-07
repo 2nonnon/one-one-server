@@ -89,7 +89,7 @@ export class OrdersRepository extends Repository<Order> {
     return result;
   }
 
-  async userDeleteOrder(id: string, user: User) {
+  async userDeleteOrder(id: number, user: User) {
     // 创建一个事务
     const queryRunner = this.connection.createQueryRunner();
 

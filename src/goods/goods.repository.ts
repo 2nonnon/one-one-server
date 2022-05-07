@@ -182,11 +182,11 @@ export class GoodsRepository extends Repository<Good> {
         queryRunner.manager.create(Sku, item),
       );
 
-      const good = Object.assign(createGoodDto, { categories, skus }) as Good;
+      const goodData = Object.assign(createGoodDto, { categories, skus });
 
-      const goodInstance = queryRunner.manager.create(Good, good);
+      const goodInstance = queryRunner.manager.create(Good, goodData);
 
-      await queryRunner.manager.save(goodInstance);
+      const good = await queryRunner.manager.save(goodInstance);
 
       await queryRunner.commitTransaction();
 
