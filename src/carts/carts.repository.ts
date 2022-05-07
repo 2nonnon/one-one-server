@@ -7,15 +7,18 @@ import { User } from '../auth/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { Cart } from './cart.entity';
 import { CreateCartDto } from './dto/create-cart.dto';
+import { UpdateQuantityDto } from './dto/update-quantity.dto';
 
 @EntityRepository(Cart)
 export class CartsRepository extends Repository<Cart> {
   private logger = new Logger('CartsRepository', { timestamp: true });
 
   async createCart(createCartDto: CreateCartDto, user: User): Promise<Cart> {
-    const { quantity, skuId } = createCartDto;
+    const { quantity, skuId, goodId, goodName } = createCartDto;
 
     const cart = this.create({
+      goodId,
+      goodName,
       quantity,
       user,
     });
@@ -39,7 +42,7 @@ export class CartsRepository extends Repository<Cart> {
         return cart;
       } else {
         this.logger.error(
-          `Failed to create cart for user "${user.username}".`,
+          `Failed to create cart for user "${user.id}".`,
           error.stack,
         );
         throw new InternalServerErrorException();
@@ -47,12 +50,12 @@ export class CartsRepository extends Repository<Cart> {
     }
   }
 
-  async updateCart(
+  async updateCartQuantity(
     id: number,
-    createCartDto: CreateCartDto,
+    updateQuantityDto: UpdateQuantityDto,
     user: User,
   ): Promise<Cart> {
-    const { quantity, skuId } = createCartDto;
+    const { quantity } = updateQuantityDto;
 
     const cart = await this.findOneOrFail({ id, user });
 
@@ -64,16 +67,16 @@ export class CartsRepository extends Repository<Cart> {
 
     try {
       await this.save(cart);
-      await this.createQueryBuilder()
-        .relation(Cart, 'sku')
-        .of(cart.id)
-        .set(skuId);
+      // await this.createQueryBuilder()
+      //   .relation(Cart, 'sku')
+      //   .of(cart.id)
+      //   .set(skuId);
       return cart;
     } catch (error) {
       this.logger.error(
         `Failed to update cart by ${id} with ${JSON.stringify(
-          createCartDto,
-        )} for user "${user.username}".`,
+          updateQuantityDto,
+        )} for user "${user.id}".`,
         error.stack,
       );
       throw new InternalServerErrorException();

@@ -5,6 +5,7 @@ import { Cart } from './cart.entity';
 import { CartsRepository } from './carts.repository';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { DeleteCartsByIdsDto } from './dto/delete-carts-by-ids.dto';
+import { UpdateQuantityDto } from './dto/update-quantity.dto';
 
 @Injectable()
 export class CartsService {
@@ -51,11 +52,11 @@ export class CartsService {
     });
   }
 
-  async updateCart(
+  async updateCartQuantity(
     id: number,
-    createCartDto: CreateCartDto,
+    updateQuantityDto: UpdateQuantityDto,
     user: User,
   ): Promise<Cart> {
-    return this.cartsRepository.updateCart(id, createCartDto, user);
+    return this.cartsRepository.updateCartQuantity(id, updateQuantityDto, user);
   }
 }

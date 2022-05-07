@@ -18,6 +18,12 @@ export class Cart {
   @Column()
   quantity: number;
 
+  @Column({ nullable: true })
+  goodId: number;
+
+  @Column({ nullable: true })
+  goodName: string;
+
   // eager: 查询数据库时是否自动返回， Exclude({ toPlainOnly: true }) 返回数据时是否排除
   @OneToOne(() => Sku, { eager: true })
   // @Exclude({ toPlainOnly: true })

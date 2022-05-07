@@ -16,6 +16,7 @@ import { Cart } from './cart.entity';
 import { CartsService } from './carts.service';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { DeleteCartsByIdsDto } from './dto/delete-carts-by-ids.dto';
+import { UpdateQuantityDto } from './dto/update-quantity.dto';
 
 @Controller('carts')
 @UseGuards(AuthGuard())
@@ -69,32 +70,32 @@ export class CartsController {
     return this.cartsService.deleteCartByIds(deleteCartsByIdsDto, user);
   }
 
-  @Patch('/:id')
-  updateCart(
+  @Patch('/:id/quantity')
+  updateCartQuantity(
     @Param('id') id: number,
-    @Body() createCartDto: CreateCartDto,
+    @Body() updateQuantityDto: UpdateQuantityDto,
     @GetUser() user: User,
   ): Promise<Cart> {
     this.loggor.verbose(
       `User "${user.id}" update cart. id: ${id} update: ${JSON.stringify(
-        createCartDto,
+        updateQuantityDto,
       )}`,
     );
-    return this.cartsService.updateCart(id, createCartDto, user);
+    return this.cartsService.updateCartQuantity(id, updateQuantityDto, user);
   }
 
   // 兼容微信
-  @Post('/:id')
-  wxUpdateCart(
+  @Post('/:id/quantity')
+  wxUpdateCartQuantity(
     @Param('id') id: number,
-    @Body() createCartDto: CreateCartDto,
+    @Body() updateQuantityDto: UpdateQuantityDto,
     @GetUser() user: User,
   ): Promise<Cart> {
     this.loggor.verbose(
       `User "${user.id}" update cart. id: ${id} update: ${JSON.stringify(
-        createCartDto,
+        updateQuantityDto,
       )}`,
     );
-    return this.cartsService.updateCart(id, createCartDto, user);
+    return this.cartsService.updateCartQuantity(id, updateQuantityDto, user);
   }
 }
