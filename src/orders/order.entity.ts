@@ -9,13 +9,14 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Order extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   receive_info: string;
 
   @Column()
@@ -49,5 +50,6 @@ export class Order extends BaseEntity {
   orderDetails: OrderDetail[];
 
   @ManyToOne(() => User)
+  @Exclude({ toPlainOnly: true })
   user: User;
 }

@@ -20,7 +20,7 @@ export class OrdersRepository extends Repository<Order> {
     createOrderDto: CreateOrderDto,
     user: User,
   ): Promise<Order> {
-    const tmp = Object.assign({} as Order, createOrderDto);
+    const tmp = Object.assign({}, createOrderDto) as Order;
 
     tmp.user = user;
     tmp.status = OrderStatus.Pre;
@@ -43,19 +43,10 @@ export class OrdersRepository extends Repository<Order> {
       );
     }
 
-    // const address =
-    //   user.addresses?.find((item) => item.isDefault === 1) ??
-    //   user.addresses[0] ??
-    //   '';
-
-    // tmp.receive_info =
-    //   address && `${address.receiver} ${address.mobile} ${address.destination}`;
-
-    const order = this.create(tmp);
+    const orderInstance = this.create(tmp);
 
     try {
-      await this.save(order);
-      delete order.user;
+      const order = await this.save(orderInstance);
       return order;
     } catch (error) {
       this.logger.error(
