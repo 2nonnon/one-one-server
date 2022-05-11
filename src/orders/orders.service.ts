@@ -7,6 +7,7 @@ import { Order } from './order.entity';
 import { OrdersRepository } from './order.repository';
 import { GetOrdersPageDto } from './dto/get-orders-page.dto';
 import { OrdersPage } from './orders-page.interface';
+import { ConfirmOrderDto } from './dto/confirm-order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -65,6 +66,20 @@ export class OrdersService {
     return this.ordersRepository.userCreateOrder(createOrderDto, user);
   }
 
+  async userConfirmOrder(
+    id: number,
+    confirmOrderDto: ConfirmOrderDto,
+    user: User,
+  ): Promise<Order> {
+    const { status, receive_info, remark } = confirmOrderDto;
+    const order = await this.userGetOrderById(id, user);
+    order.paid_time = `${Date.now()}`;
+    if (remark) order.remark = remark;
+    order.receive_info = receive_info;
+
+    return this.ordersRepository.updateOrderStatus(status, order);
+  }
+
   async userDeleteOrder(id: number, user: User): Promise<void> {
     return this.ordersRepository.userDeleteOrder(id, user);
   }
@@ -89,6 +104,16 @@ export class OrdersService {
     return this.ordersRepository.updateOrderReceiveInfo(receive_info, order);
   }
 
+  async userUpdateOrderRemark(
+    id: number,
+    remark: string,
+    user: User,
+  ): Promise<Order> {
+    const order = await this.userGetOrderById(id, user);
+    order.remark = remark;
+    return this.ordersRepository.save(order);
+  }
+
   async updateOrderStatus(id: string, status: OrderStatus): Promise<Order> {
     const order = await this.getOrderById(id);
 
@@ -102,5 +127,11 @@ export class OrdersService {
     const order = await this.getOrderById(id);
 
     return this.ordersRepository.updateOrderReceiveInfo(receive_info, order);
+  }
+
+  async updateOrderRemark(id: string, remark: string): Promise<Order> {
+    const order = await this.getOrderById(id);
+    order.remark = remark;
+    return this.ordersRepository.save(order);
   }
 }

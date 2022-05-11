@@ -1,3 +1,4 @@
+import { AdminsRepository } from './admins.repository';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
 import { Module } from '@nestjs/common';
@@ -32,7 +33,7 @@ import { HttpModule } from '@nestjs/axios';
     //     expiresIn: 3600,
     //   },
     // }),
-    TypeOrmModule.forFeature([UsersRepository]),
+    TypeOrmModule.forFeature([UsersRepository, AdminsRepository]),
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],

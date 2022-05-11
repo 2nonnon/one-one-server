@@ -14,6 +14,9 @@ import { OrdersModule } from './orders/orders.module';
 import { OrderDetailsModule } from './order-details/order-details.module';
 import { UploadModule } from './upload/upload.module';
 import { UsersModule } from './users/users.module';
+import { NoticesModule } from './notices/notices.module';
+import { CommentsModule } from './comments/comments.module';
+import { AdminsModule } from './admins/admins.module';
 
 @Module({
   imports: [
@@ -59,6 +62,9 @@ import { UsersModule } from './users/users.module';
     OrderDetailsModule,
     UploadModule,
     UsersModule,
+    NoticesModule,
+    CommentsModule,
+    AdminsModule,
   ],
 })
 export class AppModule {}

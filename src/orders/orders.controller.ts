@@ -12,6 +12,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/user.entity';
+import { ConfirmOrderDto } from './dto/confirm-order.dto';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { GetOrdersPageDto } from './dto/get-orders-page.dto';
 import { UpdateOrderReceiveInfoDto } from './dto/update-order-receive-info.dto';
@@ -123,26 +124,20 @@ export class OrdersController {
   }
 
   // 用户修改订单状态和地址
-  @Patch('/:id/update')
-  userUpdateOrder(
+  @Patch('/:id/confirm')
+  userConfirmOrder(
     @Param('id') id: number,
-    @Body() updateOrderDto: UpdateOrderReceiveInfoDto & UpdateOrderStatusDto,
+    @Body() confirmOrderDto: ConfirmOrderDto,
     @GetUser() user: User,
   ): Promise<Order> {
     this.loggor.verbose(
       `User "${
         user.username
       }" update an order status by id: ${id} with ${JSON.stringify(
-        updateOrderDto,
+        confirmOrderDto,
       )}`,
     );
-    const { status, receive_info } = updateOrderDto;
-    this.ordersService.userUpdateOrderReceiveInfo(id, status, user);
-    return this.ordersService.userUpdateOrderReceiveInfo(
-      id,
-      receive_info,
-      user,
-    );
+    return this.ordersService.userConfirmOrder(id, confirmOrderDto, user);
   }
 
   // 兼容weixin
@@ -187,26 +182,20 @@ export class OrdersController {
   }
 
   // 用户修改订单状态和地址
-  @Post('/:id/update')
-  wxUserUpdateOrder(
+  @Post('/:id/confirm')
+  wxUserConfirmOrder(
     @Param('id') id: number,
-    @Body() updateOrderDto: UpdateOrderReceiveInfoDto & UpdateOrderStatusDto,
+    @Body() confirmOrderDto: ConfirmOrderDto,
     @GetUser() user: User,
   ): Promise<Order> {
     this.loggor.verbose(
       `User "${
         user.username
       }" update an order status by id: ${id} with ${JSON.stringify(
-        updateOrderDto,
+        confirmOrderDto,
       )}`,
     );
-    const { status, receive_info } = updateOrderDto;
-    this.ordersService.userUpdateOrderReceiveInfo(id, status, user);
-    return this.ordersService.userUpdateOrderReceiveInfo(
-      id,
-      receive_info,
-      user,
-    );
+    return this.ordersService.userConfirmOrder(id, confirmOrderDto, user);
   }
 
   // 管理员通过id获取订单

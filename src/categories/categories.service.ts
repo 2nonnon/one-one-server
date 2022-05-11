@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Categories } from './categories.inteface';
 import { Category } from './category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { User } from '../auth/user.entity';
 
 @Injectable()
 export class CategoriesService {
@@ -19,24 +18,18 @@ export class CategoriesService {
 
   async createCategory(
     createCategoryDto: CreateCategoryDto,
-    user: User,
   ): Promise<Category> {
-    return this.categoriesRepository.createCategory(createCategoryDto, user);
+    return this.categoriesRepository.createCategory(createCategoryDto);
   }
 
-  async deleteCategory(id: number, user: User): Promise<void> {
-    return this.categoriesRepository.deleteCategory(id, user);
+  async deleteCategory(id: number): Promise<void> {
+    return this.categoriesRepository.deleteCategory(id);
   }
 
   async updateCategory(
     id: number,
     createCategoryDto: CreateCategoryDto,
-    user: User,
   ): Promise<Category> {
-    return this.categoriesRepository.updateCategory(
-      id,
-      createCategoryDto,
-      user,
-    );
+    return this.categoriesRepository.updateCategory(id, createCategoryDto);
   }
 }

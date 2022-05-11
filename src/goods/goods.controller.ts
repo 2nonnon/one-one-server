@@ -16,8 +16,6 @@ import { GoodDetail } from './good-detail.interface';
 import { CreateGoodDto } from './dto/create-good.dto';
 import { Good } from './good.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from '../auth/get-user.decorator';
-import { User } from '../auth/user.entity';
 import { UpdateGoodSkuDto } from './dto/update-good-sku.dto';
 import { UpdateGoodSpuDto } from './dto/update-good-spu.dto';
 
@@ -43,19 +41,16 @@ export class GoodsController {
 
   @Delete('/:id')
   @UseGuards(AuthGuard())
-  deleteGood(@Param('id') id: string, @GetUser() user: User): Promise<void> {
+  deleteGood(@Param('id') id: string): Promise<void> {
     this.loggor.verbose(`retrieving goods by id:${id}`);
-    return this.goodsService.deleteGood(id, user);
+    return this.goodsService.deleteGood(id);
   }
 
   @Post('/create')
   @UseGuards(AuthGuard())
-  createGood(
-    @Body() createGoodDto: CreateGoodDto,
-    @GetUser() user: User,
-  ): Promise<Good> {
+  createGood(@Body() createGoodDto: CreateGoodDto): Promise<Good> {
     this.loggor.verbose(`retrieving goods by ${JSON.stringify(createGoodDto)}`);
-    return this.goodsService.createGood(createGoodDto, user);
+    return this.goodsService.createGood(createGoodDto);
   }
 
   @Patch('/:id/spu')
@@ -63,14 +58,11 @@ export class GoodsController {
   updateGoodSpu(
     @Param('id') id: number,
     @Body() updateGoodSpuDto: UpdateGoodSpuDto,
-    @GetUser() user: User,
   ): Promise<Good> {
     this.loggor.verbose(
-      `User "${user.username}" update good ${id}, Good ${JSON.stringify(
-        updateGoodSpuDto,
-      )}`,
+      `update good ${id}, Good ${JSON.stringify(updateGoodSpuDto)}`,
     );
-    return this.goodsService.updateGoodSpu(id, updateGoodSpuDto, user);
+    return this.goodsService.updateGoodSpu(id, updateGoodSpuDto);
   }
 
   @Patch('/:id/sku')
@@ -78,13 +70,10 @@ export class GoodsController {
   updateGoodSku(
     @Param('id') id: number,
     @Body() updateGoodSkuDto: UpdateGoodSkuDto,
-    @GetUser() user: User,
   ): Promise<Good> {
     this.loggor.verbose(
-      `User "${user.username}" update good ${id}, Good ${JSON.stringify(
-        updateGoodSkuDto,
-      )}`,
+      `update good ${id}, Good ${JSON.stringify(updateGoodSkuDto)}`,
     );
-    return this.goodsService.updateGoodSku(id, updateGoodSkuDto, user);
+    return this.goodsService.updateGoodSku(id, updateGoodSkuDto);
   }
 }

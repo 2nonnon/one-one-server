@@ -5,7 +5,6 @@ import { GetGoodsPageDto } from './dto/get-goods-page.dto';
 import { GoodsRepository } from './goods.repository';
 import { GoodDetail } from './good-detail.interface';
 import { CreateGoodDto } from './dto/create-good.dto';
-import { User } from '../auth/user.entity';
 import { Good } from './good.entity';
 import { UpdateGoodSkuDto } from './dto/update-good-sku.dto';
 import { UpdateGoodSpuDto } from './dto/update-good-spu.dto';
@@ -25,27 +24,25 @@ export class GoodsService {
     return this.goodsRepository.getGoods(getGoodsPageDto);
   }
 
-  async deleteGood(id: string, user: User): Promise<void> {
-    return this.goodsRepository.deleteGood(id, user);
+  async deleteGood(id: string): Promise<void> {
+    return this.goodsRepository.deleteGood(id);
   }
 
-  async createGood(createGoodDto: CreateGoodDto, user: User): Promise<Good> {
-    return this.goodsRepository.createGood(createGoodDto, user);
+  async createGood(createGoodDto: CreateGoodDto): Promise<Good> {
+    return this.goodsRepository.createGood(createGoodDto);
   }
 
   async updateGoodSpu(
     id: number,
     updateGoodSpuDto: UpdateGoodSpuDto,
-    user: User,
   ): Promise<Good> {
-    return this.goodsRepository.updateGoodSpu(id, updateGoodSpuDto, user);
+    return this.goodsRepository.updateGoodSpu(id, updateGoodSpuDto);
   }
 
   async updateGoodSku(
     id: number,
     updateGoodSkuDto: UpdateGoodSkuDto,
-    user: User,
   ): Promise<Good> {
-    return this.goodsRepository.updateGoodSku(id, updateGoodSkuDto, user);
+    return this.goodsRepository.updateGoodSku(id, updateGoodSkuDto);
   }
 }

@@ -6,7 +6,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Categories } from './categories.inteface';
-import { User } from '../auth/user.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 
 @EntityRepository(Category)
@@ -37,7 +36,6 @@ export class CategoriesRepository extends Repository<Category> {
 
   async createCategory(
     createCategoryDto: CreateCategoryDto,
-    user: User,
   ): Promise<Category> {
     const { name, parentId } = createCategoryDto;
 
@@ -58,16 +56,14 @@ export class CategoriesRepository extends Repository<Category> {
       return category;
     } catch (error) {
       this.logger.error(
-        `Failed to create category with ${JSON.stringify(
-          createCategoryDto,
-        )} for user "${user.username}".`,
+        `Failed to create category with ${JSON.stringify(createCategoryDto)}.`,
         error.stack,
       );
       throw new InternalServerErrorException();
     }
   }
 
-  async deleteCategory(id: number, user: User): Promise<void> {
+  async deleteCategory(id: number): Promise<void> {
     const result = await this.delete({ id });
 
     if (result.affected === 0) {
@@ -78,7 +74,6 @@ export class CategoriesRepository extends Repository<Category> {
   async updateCategory(
     id: number,
     createCategoryDto: CreateCategoryDto,
-    user: User,
   ): Promise<Category> {
     const category = await this.findOneOrFail({ id });
 
@@ -105,7 +100,7 @@ export class CategoriesRepository extends Repository<Category> {
       this.logger.error(
         `Failed to update category by ${id} with ${JSON.stringify(
           createCategoryDto,
-        )} for user "${user.username}".`,
+        )} .`,
         error.stack,
       );
       throw new InternalServerErrorException();

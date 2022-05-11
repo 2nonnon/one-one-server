@@ -1,5 +1,6 @@
 import { Sku } from './../skus/sku.entity';
 import { Category } from '../categories/category.entity';
+import { Comment } from '../comments/comment.entity';
 import {
   Column,
   Entity,
@@ -60,4 +61,7 @@ export class Good {
     cascade: true,
   })
   skus: Sku[];
+
+  @OneToMany(() => Comment, (comment) => comment.good)
+  comments: Comment[];
 }

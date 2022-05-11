@@ -2,16 +2,11 @@ import { Sku } from './../skus/sku.entity';
 import { Category } from './../categories/category.entity';
 import { Sort } from './sort.enum';
 import { GoodsPage } from './goods-page.interface';
-import {
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { InternalServerErrorException, Logger } from '@nestjs/common';
 import { EntityRepository, Repository } from 'typeorm';
 import { GetGoodsPageDto } from './dto/get-goods-page.dto';
 import { Good } from './good.entity';
 import { GoodDetail } from './good-detail.interface';
-import { User } from 'src/auth/user.entity';
 import { CreateGoodDto } from './dto/create-good.dto';
 import { UpdateGoodSkuDto } from './dto/update-good-sku.dto';
 import { UpdateGoodSpuDto } from './dto/update-good-spu.dto';
@@ -144,7 +139,7 @@ export class GoodsRepository extends Repository<Good> {
     }
   }
 
-  async deleteGood(id: string, user: User): Promise<void> {
+  async deleteGood(id: string): Promise<void> {
     // 创建一个事务
     const queryRunner = this.manager.connection.createQueryRunner();
 
@@ -166,7 +161,7 @@ export class GoodsRepository extends Repository<Good> {
     }
   }
 
-  async createGood(createGoodDto: CreateGoodDto, user: User): Promise<Good> {
+  async createGood(createGoodDto: CreateGoodDto): Promise<Good> {
     const queryRunner = this.manager.connection.createQueryRunner();
 
     await queryRunner.connect();
@@ -204,7 +199,6 @@ export class GoodsRepository extends Repository<Good> {
   async updateGoodSpu(
     id: number,
     updateGoodSpuDto: UpdateGoodSpuDto,
-    user: User,
   ): Promise<Good> {
     const queryRunner = this.manager.connection.createQueryRunner();
 
@@ -243,7 +237,6 @@ export class GoodsRepository extends Repository<Good> {
   async updateGoodSku(
     id: number,
     updateGoodSkuDto: UpdateGoodSkuDto,
-    user: User,
   ): Promise<Good> {
     const queryRunner = this.manager.connection.createQueryRunner();
 

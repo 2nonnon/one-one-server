@@ -10,8 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from '../auth/get-user.decorator';
-import { User } from '../auth/user.entity';
 import { Attribute } from './attribute.entity';
 import { Attributes } from './attributes.inteface';
 import { AttributesService } from './attributes.service';
@@ -33,24 +31,18 @@ export class AttributesController {
   @UseGuards(AuthGuard())
   createAttribute(
     @Body() createAttributeDto: CreateAttributeDto,
-    @GetUser() user: User,
   ): Promise<Attribute> {
     this.loggor.verbose(
-      `User "${user.username}" create a attribute, Attribute ${JSON.stringify(
-        createAttributeDto,
-      )}`,
+      ` create a attribute, Attribute ${JSON.stringify(createAttributeDto)}`,
     );
-    return this.attributesService.createAttribute(createAttributeDto, user);
+    return this.attributesService.createAttribute(createAttributeDto);
   }
 
   @Delete('/:id')
   @UseGuards(AuthGuard())
-  deleteAttribute(
-    @Param('id') id: number,
-    @GetUser() user: User,
-  ): Promise<void> {
-    this.loggor.verbose(`User "${user.username}" detele attribute ${id}`);
-    return this.attributesService.deleteAttribute(id, user);
+  deleteAttribute(@Param('id') id: number): Promise<void> {
+    this.loggor.verbose(`detele attribute ${id}`);
+    return this.attributesService.deleteAttribute(id);
   }
 
   @Patch('/:id')
@@ -58,15 +50,10 @@ export class AttributesController {
   updateAttribute(
     @Param('id') id: number,
     @Body() createAttributeDto: CreateAttributeDto,
-    @GetUser() user: User,
   ): Promise<Attribute> {
     this.loggor.verbose(
-      `User "${
-        user.username
-      }" update attribute ${id}, Attribute ${JSON.stringify(
-        createAttributeDto,
-      )}`,
+      `update attribute ${id}, Attribute ${JSON.stringify(createAttributeDto)}`,
     );
-    return this.attributesService.updateAttribute(id, createAttributeDto, user);
+    return this.attributesService.updateAttribute(id, createAttributeDto);
   }
 }

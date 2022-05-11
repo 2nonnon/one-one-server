@@ -1,6 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { Cart } from './../carts/cart.entity';
 import { Address } from './../addresses/address.entity';
+import { Comment } from '../comments/comment.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Order } from '../orders/order.entity';
 
@@ -34,4 +35,7 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 }

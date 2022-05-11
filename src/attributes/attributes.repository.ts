@@ -3,7 +3,6 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from 'src/auth/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { Attribute } from './attribute.entity';
 import { Attributes } from './attributes.inteface';
@@ -37,7 +36,6 @@ export class AttributesRepository extends Repository<Attribute> {
 
   async createAttribute(
     createAttributeDto: CreateAttributeDto,
-    user: User,
   ): Promise<Attribute> {
     const { name, parentId } = createAttributeDto;
 
@@ -60,14 +58,14 @@ export class AttributesRepository extends Repository<Attribute> {
       this.logger.error(
         `Failed to create attribute with ${JSON.stringify(
           createAttributeDto,
-        )} for user "${user.username}".`,
+        )}.`,
         error.stack,
       );
       throw new InternalServerErrorException();
     }
   }
 
-  async deleteAttribute(id: number, user: User): Promise<void> {
+  async deleteAttribute(id: number): Promise<void> {
     const result = await this.delete({ id });
     await this.delete({ parentId: id });
 
@@ -79,7 +77,6 @@ export class AttributesRepository extends Repository<Attribute> {
   async updateAttribute(
     id: number,
     createAttributeDto: CreateAttributeDto,
-    user: User,
   ): Promise<Attribute> {
     const attribute = await this.findOneOrFail({ id });
 
@@ -106,7 +103,7 @@ export class AttributesRepository extends Repository<Attribute> {
       this.logger.error(
         `Failed to update attribute by ${id} with ${JSON.stringify(
           createAttributeDto,
-        )} for user "${user.username}".`,
+        )} .`,
         error.stack,
       );
       throw new InternalServerErrorException();
