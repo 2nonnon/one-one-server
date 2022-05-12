@@ -14,6 +14,9 @@ export class User {
   openid: string;
 
   @Column({ nullable: true })
+  profile: string;
+
+  @Column({ nullable: true })
   @Exclude({ toPlainOnly: true })
   session: string;
 

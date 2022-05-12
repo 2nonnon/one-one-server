@@ -20,12 +20,12 @@ export class AdminsService {
     return this.adminsRepository.createAdmin(createAdminDto);
   }
 
-  async deleteAdmin(id: number): Promise<void> {
+  async deleteAdmin(id: string): Promise<void> {
     this.adminsRepository.delete(id);
   }
 
   async updateAdmin(
-    id: number,
+    id: string,
     updateAdminDto: UpdateAdminDto,
   ): Promise<Admin> {
     return this.adminsRepository.updateAdmin(id, updateAdminDto);

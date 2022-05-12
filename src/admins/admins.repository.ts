@@ -33,7 +33,7 @@ export class AdminsRepository extends Repository<Admin> {
   }
 
   async updateAdmin(
-    id: number,
+    id: string,
     updateAdminDto: UpdateAdminDto,
   ): Promise<Admin> {
     const { password } = updateAdminDto;

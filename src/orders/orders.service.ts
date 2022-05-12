@@ -26,7 +26,7 @@ export class OrdersService {
     return orders.filter((order) => order.status != OrderStatus.Pre);
   }
 
-  async getOrderById(id: string): Promise<Order> {
+  async getOrderById(id: number): Promise<Order> {
     const order = await this.ordersRepository.findOneOrFail({
       where: { id },
     });
@@ -80,6 +80,16 @@ export class OrdersService {
     return this.ordersRepository.updateOrderStatus(status, order);
   }
 
+  async userDealOrder(id: number, user: User): Promise<Order> {
+    const order = await this.userGetOrderById(id, user);
+    order.deal_time = `${Date.now()}`;
+
+    return this.ordersRepository.updateOrderStatus(
+      OrderStatus.HAS_CLOSED,
+      order,
+    );
+  }
+
   async userDeleteOrder(id: number, user: User): Promise<void> {
     return this.ordersRepository.userDeleteOrder(id, user);
   }
@@ -114,14 +124,14 @@ export class OrdersService {
     return this.ordersRepository.save(order);
   }
 
-  async updateOrderStatus(id: string, status: OrderStatus): Promise<Order> {
+  async updateOrderStatus(id: number, status: OrderStatus): Promise<Order> {
     const order = await this.getOrderById(id);
 
     return this.ordersRepository.updateOrderStatus(status, order);
   }
 
   async updateOrderReceiveInfo(
-    id: string,
+    id: number,
     receive_info: string,
   ): Promise<Order> {
     const order = await this.getOrderById(id);
@@ -129,9 +139,16 @@ export class OrdersService {
     return this.ordersRepository.updateOrderReceiveInfo(receive_info, order);
   }
 
-  async updateOrderRemark(id: string, remark: string): Promise<Order> {
+  async updateOrderRemark(id: number, remark: string): Promise<Order> {
     const order = await this.getOrderById(id);
     order.remark = remark;
     return this.ordersRepository.save(order);
+  }
+
+  async sendOrder(id: number): Promise<Order> {
+    const order = await this.getOrderById(id);
+    order.send_time = `${Date.now()}`;
+
+    return this.ordersRepository.updateOrderStatus(OrderStatus.TO_DEAL, order);
   }
 }

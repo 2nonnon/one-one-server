@@ -123,7 +123,7 @@ export class OrdersController {
     );
   }
 
-  // 用户修改订单状态和地址
+  // 用户确认订单
   @Patch('/:id/confirm')
   userConfirmOrder(
     @Param('id') id: number,
@@ -181,7 +181,7 @@ export class OrdersController {
     );
   }
 
-  // 用户修改订单状态和地址
+  // 用户确认订单
   @Post('/:id/confirm')
   wxUserConfirmOrder(
     @Param('id') id: number,
@@ -198,9 +198,21 @@ export class OrdersController {
     return this.ordersService.userConfirmOrder(id, confirmOrderDto, user);
   }
 
+  // 用户确认收货
+  @Post('/:id/deal')
+  wxUserDealOrder(
+    @Param('id') id: number,
+    @GetUser() user: User,
+  ): Promise<Order> {
+    this.loggor.verbose(
+      `User "${user.username}" deal an order status by id: ${id}`,
+    );
+    return this.ordersService.userDealOrder(id, user);
+  }
+
   // 管理员通过id获取订单
   @Get('/admin/:id')
-  getOrderById(@Param('id') id: string, @GetUser() user: User): Promise<Order> {
+  getOrderById(@Param('id') id: number, @GetUser() user: User): Promise<Order> {
     this.loggor.verbose(
       `User "${user.username}" retrieving an order by id:${id}`,
     );
@@ -223,7 +235,7 @@ export class OrdersController {
   // 管理员修改订单状态
   @Patch('/admin/:id/status')
   updateOrderStatus(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateOrderStatusDto: UpdateOrderStatusDto,
     @GetUser() user: User,
   ): Promise<Order> {
@@ -241,7 +253,7 @@ export class OrdersController {
   // 管理员修改订单地址
   @Patch('/admin/:id/receive')
   updateOrderReceiveInfo(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateOrderReceiveInfoDto: UpdateOrderReceiveInfoDto,
     @GetUser() user: User,
   ): Promise<Order> {
@@ -254,5 +266,12 @@ export class OrdersController {
     );
     const { receive_info } = updateOrderReceiveInfoDto;
     return this.ordersService.updateOrderReceiveInfo(id, receive_info);
+  }
+
+  // 管理员发货
+  @Patch('/admin/:id/send')
+  sendOrder(@Param('id') id: number): Promise<Order> {
+    this.loggor.verbose(`send an order status by id: ${id}`);
+    return this.ordersService.sendOrder(id);
   }
 }

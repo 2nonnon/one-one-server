@@ -37,14 +37,14 @@ export class AdminsController {
   }
 
   @Delete('/:id')
-  deleteAdmin(@Param('id') id: number): Promise<void> {
+  deleteAdmin(@Param('id') id: string): Promise<void> {
     this.loggor.verbose(`detele admin ${id}`);
     return this.adminsService.deleteAdmin(id);
   }
 
   @Patch('/:id')
   updateAdmin(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateAdminDto: UpdateAdminDto,
   ): Promise<Admin> {
     this.loggor.verbose(

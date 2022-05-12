@@ -9,11 +9,17 @@ import { UsersService } from './users.service';
 export class UsersController {
   private loggor = new Logger('UsersController', { timestamp: true });
 
-  constructor(private tasksService: UsersService) {}
+  constructor(private usersService: UsersService) {}
 
   @Get()
-  getUser(@GetUser() user: User): Promise<User> {
+  getUser(@GetUser() user: User): User {
     this.loggor.verbose(`User "${user.username}" retrieving user info`);
-    return this.tasksService.getUser(user);
+    return user;
+  }
+
+  @Get('/all')
+  getAllUser(): Promise<User[]> {
+    this.loggor.verbose(`retrieving all user info`);
+    return this.usersService.getUsers();
   }
 }
