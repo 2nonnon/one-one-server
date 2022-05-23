@@ -24,9 +24,7 @@ export class AddressesService {
 
   async getDefaultAddress(user: User): Promise<Address> {
     const addresses = await this.addressesRepository.find({ user });
-    const address =
-      addresses?.find((item) => item.isDefault) ??
-      addresses?.find((item) => item.isChoosed);
+    const address = addresses?.find((item) => item.isDefault);
 
     if (!address) {
       throw new NotFoundException(
@@ -60,7 +58,7 @@ export class AddressesService {
     return this.addressesRepository.updateAddress(id, createAddressDto, user);
   }
 
-  async updateAddressChoose(id: string, user: User): Promise<Address> {
-    return this.addressesRepository.updateAddressChoose(id, user);
-  }
+  // async updateAddressChoose(id: string, user: User): Promise<Address> {
+  //   return this.addressesRepository.updateAddressChoose(id, user);
+  // }
 }

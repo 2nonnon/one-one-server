@@ -20,9 +20,6 @@ export class Address {
   remark: string;
 
   @Column()
-  isChoosed: boolean;
-
-  @Column()
   isDefault: boolean;
 
   @ManyToOne(() => User, (user) => user.addresses, { eager: false })

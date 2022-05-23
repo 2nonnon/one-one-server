@@ -42,7 +42,7 @@ export class GoodsController {
   @Delete('/:id')
   @UseGuards(AuthGuard())
   deleteGood(@Param('id') id: string): Promise<void> {
-    this.loggor.verbose(`retrieving goods by id:${id}`);
+    this.loggor.verbose(`delete goods by id:${id}`);
     return this.goodsService.deleteGood(id);
   }
 

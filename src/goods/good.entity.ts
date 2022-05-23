@@ -45,10 +45,10 @@ export class Good {
   @Column({ default: `${Date.now()}` })
   sale_time?: string;
 
-  @Column('simple-array', { default: [] })
+  @Column('simple-array')
   banner: string[];
 
-  @Column('simple-array', { default: [] })
+  @Column('simple-array')
   detail: string[];
 
   @ManyToMany(() => Category, {

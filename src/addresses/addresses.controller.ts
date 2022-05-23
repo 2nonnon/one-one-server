@@ -79,16 +79,16 @@ export class AddressesController {
     return this.addressesService.updateAddress(id, createAddressDto, user);
   }
 
-  @Patch('/:id/choose')
-  updateAddressChoose(
-    @Param('id') id: string,
-    @GetUser() user: User,
-  ): Promise<Address> {
-    this.loggor.verbose(
-      `User "${user.username}" update address. id: ${id} update: choose`,
-    );
-    return this.addressesService.updateAddressChoose(id, user);
-  }
+  // @Patch('/:id/choose')
+  // updateAddressChoose(
+  //   @Param('id') id: string,
+  //   @GetUser() user: User,
+  // ): Promise<Address> {
+  //   this.loggor.verbose(
+  //     `User "${user.username}" update address. id: ${id} update: choose`,
+  //   );
+  //   return this.addressesService.updateAddressChoose(id, user);
+  // }
 
   // 兼容微信，patch 请求改 post
   @Post('/:id')
@@ -105,14 +105,14 @@ export class AddressesController {
     return this.addressesService.updateAddress(id, createAddressDto, user);
   }
 
-  @Post('/:id/choose')
-  wxUpdateAddressChoose(
-    @Param('id') id: string,
-    @GetUser() user: User,
-  ): Promise<Address> {
-    this.loggor.verbose(
-      `User "${user.username}" update address. id: ${id} update: choose`,
-    );
-    return this.addressesService.updateAddressChoose(id, user);
-  }
+  // @Post('/:id/choose')
+  // wxUpdateAddressChoose(
+  //   @Param('id') id: string,
+  //   @GetUser() user: User,
+  // ): Promise<Address> {
+  //   this.loggor.verbose(
+  //     `User "${user.username}" update address. id: ${id} update: choose`,
+  //   );
+  //   return this.addressesService.updateAddressChoose(id, user);
+  // }
 }

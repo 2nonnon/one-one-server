@@ -19,16 +19,15 @@ export class AddresssRepository extends Repository<Address> {
     const { destination, receiver, mobile, remark, isDefault } =
       createAddressDto;
 
-    const addresses = await this.find({ user });
+    if (isDefault) {
+      const addresses = await this.find({ user });
+      const lastDefault = addresses.find((item) => item.isDefault);
 
-    const lastChoosed = addresses.find((item) => item.isChoosed);
-
-    if (lastChoosed) {
-      lastChoosed.isChoosed = false;
-      await this.save(lastChoosed);
+      if (lastDefault) {
+        lastDefault.isDefault = false;
+        await this.save(lastDefault);
+      }
     }
-
-    const isChoosed = true;
 
     const address = this.create({
       destination,
@@ -36,7 +35,6 @@ export class AddresssRepository extends Repository<Address> {
       mobile,
       remark,
       isDefault,
-      isChoosed,
       user,
     });
 
@@ -62,6 +60,16 @@ export class AddresssRepository extends Repository<Address> {
     if (!address) {
       throw new NotFoundException(`Address with ID "${id}" not found`);
     } else {
+      if (createAddressDto.isDefault) {
+        const addresses = await this.find({ user });
+        const lastDefault = addresses.find((item) => item.isDefault);
+
+        if (lastDefault) {
+          lastDefault.isDefault = false;
+          await this.save(lastDefault);
+        }
+      }
+
       Object.keys(createAddressDto).forEach((prop) => {
         address[prop] = createAddressDto[prop];
       });
@@ -81,33 +89,33 @@ export class AddresssRepository extends Repository<Address> {
     }
   }
 
-  async updateAddressChoose(id: string, user: User): Promise<Address> {
-    const addresses = await this.find({ user });
+  // async updateAddressChoose(id: string, user: User): Promise<Address> {
+  //   const addresses = await this.find({ user });
 
-    const lastChoosed = addresses.find((item) => item.isChoosed);
+  //   const lastChoosed = addresses.find((item) => item.isChoosed);
 
-    if (lastChoosed) {
-      lastChoosed.isChoosed = false;
-      await this.save(lastChoosed);
-    }
+  //   if (lastChoosed) {
+  //     lastChoosed.isChoosed = false;
+  //     await this.save(lastChoosed);
+  //   }
 
-    const address = await this.findOneOrFail({ id, user });
+  //   const address = await this.findOneOrFail({ id, user });
 
-    if (!address) {
-      throw new NotFoundException(`Address with ID "${id}" not found`);
-    }
+  //   if (!address) {
+  //     throw new NotFoundException(`Address with ID "${id}" not found`);
+  //   }
 
-    address.isChoosed = true;
+  //   address.isChoosed = true;
 
-    try {
-      await this.save(address);
-      return address;
-    } catch (error) {
-      this.logger.error(
-        `Failed to update address for user "${user.username}".`,
-        error.stack,
-      );
-      throw new InternalServerErrorException();
-    }
-  }
+  //   try {
+  //     await this.save(address);
+  //     return address;
+  //   } catch (error) {
+  //     this.logger.error(
+  //       `Failed to update address for user "${user.username}".`,
+  //       error.stack,
+  //     );
+  //     throw new InternalServerErrorException();
+  //   }
+  // }
 }
