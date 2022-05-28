@@ -39,6 +39,12 @@ export class GoodsController {
     return this.goodsService.getGoods(getGoodsPageDto);
   }
 
+  @Post('/ids')
+  getGoodByIds(@Body() ids: number[]): Promise<Good[]> {
+    this.loggor.verbose(`retrieving goods by ${JSON.stringify(ids)}`);
+    return this.goodsService.getGoodByIds(ids);
+  }
+
   @Delete('/:id')
   @UseGuards(AuthGuard())
   deleteGood(@Param('id') id: string): Promise<void> {

@@ -30,6 +30,9 @@ export class User {
   @Exclude({ toPlainOnly: true })
   password: string;
 
+  @Column('simple-array', { nullable: true })
+  collection: string[];
+
   @OneToMany(() => Address, (address) => address.user)
   addresses: Address[];
 

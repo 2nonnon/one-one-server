@@ -24,6 +24,11 @@ export class GoodsService {
     return this.goodsRepository.getGoods(getGoodsPageDto);
   }
 
+  async getGoodByIds(ids: number[]): Promise<Good[]> {
+    const goods = this.goodsRepository.findByIds(ids);
+    return goods;
+  }
+
   async deleteGood(id: string): Promise<void> {
     return this.goodsRepository.deleteGood(id);
   }
